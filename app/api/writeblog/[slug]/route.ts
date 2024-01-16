@@ -1,9 +1,6 @@
 //app/api/gpt/route.ts
-import model from "@/app/models";
-import { headers } from 'next/headers'
-import { NextApiRequest } from "next";
 import OpenAI from "openai";
-export async function GET(request: NextApiRequest, { params }: { params: { slug: string } }) {
+export async function GET(request: Request, { params }: { params: { slug: string } }) {
   const slug = params.slug // 'a', 'b', or 'c'
   // const apiKey= params.apiKey // 'a', 'b', or 'c'
   // var key = headers().get("x-api-key")
