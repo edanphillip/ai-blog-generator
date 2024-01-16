@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "markdown-air": "^0.0.4",
     "next": "14.0.4",
     "openai": "^4.24.1",
     "react": "^18",

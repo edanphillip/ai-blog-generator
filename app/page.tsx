@@ -1,5 +1,6 @@
 //app/page.tsx
 'use client'
+import "./air.css"
 
 import { useState } from "react";
 import Markdown from "react-markdown";
@@ -10,14 +11,19 @@ interface blogidea {
 interface blogpost {
   response: string,
 }
+interface isLoading {
+  part1: false,
+  part2: false
+}
 export default function Home() {
+  const [part1IsLoading, setPart1IsLoading] = useState(false);
+  const [part2IsLoading, setPart2IsLoading] = useState(false);
   const [blogTopicInput, setBlogTopicInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [blogIdeaList, setBlogIdeaList] = useState<blogidea[]>([])
   const [selectedBlogIdea, setSelectedBlogIdea] = useState("drone")
   const [blogPost, setPart2Response] = useState<blogpost>({ response: "" })
   const getblogideas = async () => {
-    setIsLoading(true);
+    setPart1IsLoading(true);
 
     try {
       var url = `/api/gpt/${blogTopicInput}/`
@@ -35,12 +41,12 @@ export default function Home() {
       console.error(error);
     }
 
-
-    setIsLoading(false);
+    setPart1IsLoading(false);
     setBlogTopicInput('');
+
   }
   const writeblog = async (idea: string) => {
-    setIsLoading(true);
+    setPart2IsLoading(true);
     try {
       var url = `/api/writeblog/${idea}/`
       const { data } = await fetch(url, {
@@ -57,26 +63,26 @@ export default function Home() {
       console.error(error);
     }
 
-
-    setIsLoading(false);
+    setPart2IsLoading(false);
   }
   return (
-    <main className={`flex min-h-screen flex-col  content-center w-9/12`}>
+    <main className={`text-white flex min-h-screen flex-col  content-center w-9/12`}>
       <div className="flex flex-col gap-y-5 w-[100%]">
         {/* PART 1 */}
         <p className="inline-block relative  ">Enter Blog Topic to Generate Blog Article Ideas</p>
         <form action={getblogideas} className="relative ">
           <input className="bg-gray-600 p-2 rounded-lg  w-[100%] " type="text" value={blogTopicInput} onChange={(e) => setBlogTopicInput(e.target.value)} />
-          <button type="submit" className="inline-block align-top h-[100%] m-auto relative w-[20%] min-w-[50px]">Submit</button>
+          <button type="submit" onSubmit={(e) => { e.preventDefault(); getblogideas(); }} className=" border-2 border-blue-400 inline-block align-top h-[100%] m-auto relative w-[20%] min-w-[50px]">Submit</button>
         </form>
         <div className="flex flex-col gap-4 justify-around p-4 border-2 border-white">
           <h2 className="text-xl font-bold">Options:</h2>
+          <BeatLoader color="gray" loading={part1IsLoading} />
           {/* <p className="flex " dangerouslySetInnerHTML={{ __html: response }}></p> */}
 
 
           {/* PART 2 */}
-          <BeatLoader color="gray" loading={isLoading} />
           <form action={() => writeblog(selectedBlogIdea)} className="relative flex flex-col gap-2 w-[100%]">
+            <BeatLoader color="white" className="bg-red" loading={part2IsLoading} />
             {blogIdeaList &&
               blogIdeaList.map((item, index) => {
                 return (
@@ -87,13 +93,13 @@ export default function Home() {
                 )
               })
             }
-            <button type="submit" className="inline-block align-top h-[100%] m-auto relative w-[20%] min-w-[50px]">Submit</button>
+            <button type="submit" className=" border-2 border-blue-400 inline-block align-top h-[100%] m-auto relative w-[20%] min-w-[50px]">Submit</button>
           </form>
           {/* PART 3*/}
-          <Markdown className={"bg-slate-500"}>{blogPost?.response}</Markdown>
-          {/* <textarea value={blogPost?.response} className="resize-y text-black min-h-[800px]" onChange={(e) => setPart2Response({ response: e.target.value })}>
-          </textarea> */}
-          <button type="button" className="hover:bg-blue-700 transition-colors p-2" onClick={() => { navigator.clipboard.writeText(blogPost.response) }}
+          {/* <Markdown className={"bg-slate-500"}>{blogPost?.response}</Markdown> */}
+          <textarea value={blogPost?.response} className="resize-y text-black min-h-[800px]" onChange={(e) => setPart2Response({ response: e.target.value })}>
+          </textarea>
+          <button type="button" className=" border-2 border-blue-400 hover:bg-blue-700 transition-colors p-2" onClick={() => { blogPost.response ? navigator.clipboard.writeText(blogPost.response) : console.log("nothing to copy"); }}
           >Copy Text</button>
         </div>
       </div>
