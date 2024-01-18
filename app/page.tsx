@@ -26,12 +26,15 @@ export default function Home() {
 
   useAutosizeTextArea(textAreaRef.current, blogPostText);
 
-
+  const [errorList, seterrorList] = useState<string[]>([])
   const getblogideas = async () => {
     setPart1IsLoading(true);
-
+    var query = blogTopicInput ? blogTopicInput : null;
+    if (!query) {
+      errorList.push("Invalid Query: " + query)
+    };
     try {
-      var url = `/api/gpt/${blogTopicInput}/`
+      var url = `/api/gpt/${query}/`
       const { data } = await fetch(url, {
         method: "GET",
         headers: {
@@ -47,9 +50,11 @@ export default function Home() {
       setBlogIdeaList([...data.blog_ideas])
     } catch (error) {
       console.error(error);
+      errorList.push(error as string)
     }
 
     setPart1IsLoading(false);
+    seterrorList([])
     setBlogTopicInput('');
 
   }
@@ -190,26 +195,30 @@ export default function Home() {
 
   return (
     <main className={`text-black flex min-h-screen flex-col  content-center px-10 `}>
-      <div className="flex flex-col gap-y-5 w-[100%] ">
-        {/* PART 1 */}
+
+      <div className="flex flex-col gap-y-2 w-[100%] ">
         <h1 className="text-xl text-center text-primary-400
         md:text-6xl sm:text-4xl">AI Blog Generator</h1>
-        <p className="inline-block relative font-semibold text-center ">Enter Blog Topic to Generate Blog Article Ideas</p>
-        <form action={getblogideas} className="relative flex flex-col">
-          <input className="border-2 border-gray-400 bg-white p-2 rounded-lg  w-[100%] " type="text" value={blogTopicInput} onChange={(e) => setBlogTopicInput(e.target.value)} />
-          <button
-            type="submit"
-            onSubmit={(e) => { e.preventDefault(); getblogideas(); }}
-            className="transform  rounded-md bg-primary-600/95 px-5 py-3 my-2 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300 w-100%  "
-          >Submit</button>
-        </form>
 
-        {/* PART 2 */}
-        <div className="flex flex-col gap-4 justify-around p-4 border-2 border-white w-full bg-gray-50  ">
-          {/* <p className="flex " dangerouslySetInnerHTML={{ __html: response }}></p> */}
+        <div className="flex flex-row gap-4 justify-around p-4 border-2 border-white w-full bg-gray-50  ">
+          <div className="flex flex-col gap-y-2 w-[100%] ">
 
-          <div className="flex flex-col gap-4 md:flex-row  w-[100%]">
-
+            <p className="inline-block relative font-semibold text-center ">Enter Blog Topic to Generate Blog Article Ideas</p>
+            {/* PART 1 */}
+            <form action={getblogideas} className="relative flex flex-col">
+              {errorList.map((err, index) => {
+                return <p key={index} className="text-red-400 text-md text-center bg-red-50 border-2 px-3 py-1 rounded-sm">
+                  {err}
+                </p>
+              })}
+              <input className="border-2 border-gray-400 bg-white p-2 rounded-lg  w-[100%] " type="text" value={blogTopicInput} onChange={(e) => setBlogTopicInput(e.target.value)} />
+              <button
+                type="submit"
+                onSubmit={(e) => { e.preventDefault(); getblogideas(); }}
+                className="transform  rounded-md bg-primary-600/95 px-5 py-3 my-2 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300 w-100%  "
+              >Submit</button>
+            </form>
+            {/* PART 2 */}
             <form action={() => writeblog(selectedBlogIdea)} className=" flex w-[100%] flex-col gap-2 ">
               <p className="inline-block font-semibold">Select a blog topic then generate the article using AI</p>
               <BeatLoader color="gray" loading={part1IsLoading} />
@@ -225,6 +234,8 @@ export default function Home() {
               }
               <button type="submit" className=" transform rounded-md bg-primary-600/95 px-5 py-3 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300  ">Generate</button>
             </form>
+          </div>
+          <div className="flex flex-col gap-4 md:flex-row  w-[100%]">
             {/* PART 3*/}
             <div className="w-[100%] h-[680px]  text-center flex flex-col gap-2">
               <div className="togglePreview flex flex-row w-[100%]">

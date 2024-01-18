@@ -8,7 +8,7 @@ export async function GET(request: Request, { params }: { params: { slug: string
   const slug = params.slug
   var OPENAI_API_KEY = process.env.OPENAI_API_KEY//? key : process.env.OPENAI_API_KEY;
   let message = slug ? slug : "drone";
-  const finetuning = "I need you to only respond to the prompt in markdown format. DO NOT precede the markdown with any text nor follow the markdown with any more text. Write a blog post about this topic:"
+  const finetuning = "I need you to only respond to the prompt in markdown format. DO NOT precede the markdown with any text nor follow the markdown with any more text. Be sure to underline, and italicize often to grab attention to important parts. be sure to use h1 h2 h3 h4 tags and others to make text pop. Write a blog post about this topic:"
   const schema = {
     type: "object",
     properties: {
