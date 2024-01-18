@@ -67,8 +67,8 @@ export default function Home() {
       console.log("blog stream recieved")
       const reader = res.body?.getReader();
       const decoder = new TextDecoder("utf-8");
-      let toDisplayText = ""
       let preDisplayText = ""
+      let toDisplayText = ""
       let trimmedBeginning = false
       while (true) {
         try {
@@ -76,25 +76,31 @@ export default function Home() {
           const { done, value } = chunk!;
           let decodedChunk = decoder.decode(value);
 
-          //trim beginning of text by sending output to a different variable
+          //trim beginning of text  
           if (!trimmedBeginning) {
-            if (decodedChunk.includes(': \\"')) {
-              var splitstring = decodedChunk.split(': \\"')
-              preDisplayText += splitstring[0]
-              decodedChunk = splitstring[1]
-              trimmedBeginning = true;
+            //send all data to 1st pre-display variable
+            preDisplayText += decodedChunk;
+            //check if the characters that come before the actual response have been rendered
+            if (preDisplayText.includes(': \\"')) {
+              //when found, switch bugget and add the split pre-display to respective buckets
+              trimmedBeginning = true
+              var splitstring = preDisplayText.split(': \\"')
+              preDisplayText = splitstring[0]
+              toDisplayText = splitstring[1];
+              continue;
+              //break if done somehow.. shouldnt be possible if normal response is recieved
             } else {
-              preDisplayText += decodedChunk
               if (done) {
                 break;
               }
-              continue;
             }
+            continue;
           }
+          //then everything to 2nd bucket 
           toDisplayText = toDisplayText + decodedChunk;
           console.log("chunk:", decodedChunk);
           if (toDisplayText.includes("\\n")) {
-            const newtext = toDisplayText.replace(/\\\\n/g, '')
+            const newtext = toDisplayText.replace(/\\\\n/g, '\n')
               .replace(/\\\\"\\\\n\}\"\}\}/g, '');
             toDisplayText = newtext;
           }
@@ -189,7 +195,7 @@ export default function Home() {
         md:text-6xl sm:text-4xl">AI Blog Generator</h1>
         <p className="inline-block relative font-semibold text-center ">Enter Blog Topic to Generate Blog Article Ideas</p>
         <form action={getblogideas} className="relative flex flex-col">
-          <input className="bg-white p-2 rounded-lg  w-[100%] " type="text" value={blogTopicInput} onChange={(e) => setBlogTopicInput(e.target.value)} />
+          <input className="border-2 border-gray-400 bg-white p-2 rounded-lg  w-[100%] " type="text" value={blogTopicInput} onChange={(e) => setBlogTopicInput(e.target.value)} />
           <button
             type="submit"
             onSubmit={(e) => { e.preventDefault(); getblogideas(); }}
@@ -219,9 +225,10 @@ export default function Home() {
               <button type="submit" className=" transform rounded-md bg-primary-600/95 px-5 py-3 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300  ">Generate</button>
             </form>
             {/* PART 3*/}
-            <div className="w-[100%] h-[680px] bg-gray-100 text-center flex flex-col gap-2">
+            <div className="w-[100%] h-[680px]  text-center flex flex-col gap-2">
               {/* <Markdown className={"bg-slate-500"}>{blogPost?.response}</Markdown> */}
               <textarea id="textarea"
+                className="border-2 min-h-48 border-gray-400 rounded-xl  bg-gray-200 max-h-full resize-y w-[100%] text-black "
                 ref={textAreaRef}
                 onInput={(e) => {
                   e.currentTarget.style.height = ""; e.currentTarget.style.height = e.currentTarget.scrollHeight + "px"
@@ -230,7 +237,6 @@ export default function Home() {
                   e.currentTarget.style.height = ""; e.currentTarget.style.height = e.currentTarget.scrollHeight + "px";
                   setBlogPostText(e.target.value)
                 }}
-                className="bg-gray-200 max-h-full resize-y w-[100%] text-black "
               >
               </textarea>
               <button type="button" className="transform rounded-md bg-primary-600/95 px-5 py-3 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300 " onClick={() => { blogPostText ? navigator.clipboard.writeText(blogPostText) : console.log("nothing to copy"); }}
