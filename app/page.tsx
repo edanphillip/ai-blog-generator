@@ -20,6 +20,7 @@ export default function Home() {
   const [blogIdeaList, setBlogIdeaList] = useState<blogidea[]>([])
   const [selectedBlogIdea, setSelectedBlogIdea] = useState("drone")
   const [blogPostText, setBlogPostText] = useState("")
+  const [showPreview, setShowPreview] = useState(true)
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -226,19 +227,35 @@ export default function Home() {
             </form>
             {/* PART 3*/}
             <div className="w-[100%] h-[680px]  text-center flex flex-col gap-2">
-              {/* <Markdown className={"bg-slate-500"}>{blogPost?.response}</Markdown> */}
-              <textarea id="textarea"
-                className="border-2 min-h-48 border-gray-400 rounded-xl  bg-gray-200 max-h-full resize-y w-[100%] text-black "
-                ref={textAreaRef}
-                onInput={(e) => {
-                  e.currentTarget.style.height = ""; e.currentTarget.style.height = e.currentTarget.scrollHeight + "px"
-                }} value={blogPostText}
-                onChange={(e) => {
-                  e.currentTarget.style.height = ""; e.currentTarget.style.height = e.currentTarget.scrollHeight + "px";
-                  setBlogPostText(e.target.value)
-                }}
-              >
-              </textarea>
+              <div className="togglePreview flex flex-row w-[100%]">
+                <button
+                  className={"transition-colors inline-block bg-gray-100 text-xl px-auto w-full py-2 border-2 hover:border-primary-700  border-r-0 hover:bg-primary-600 rounded-tl-xl justify-center" + (showPreview ? "border-primary-700 bg-primary-600" : "")}
+                  onClick={() => setShowPreview(true)}>
+                  Preview
+                </button>
+                <button
+                  className={"transition-colors inline-block bg-gray-100 text-xl px-auto w-full py-2 border-2 border-l-0 hover:border-primary-700 hover:bg-primary-600 rounded-tr-xl justify-center" + (!showPreview ? "border-primary-700 bg-primary-600" : "")}
+                  onClick={() => setShowPreview(false)}>
+                  Edit
+                </button>
+              </div>
+
+              {showPreview ? <Markdown className={"prose w-[100%]lg:prose-xl border-2 min-h-48 border-gray-400 rounded-b-xl overflow-scroll bg-gray-100 max-h-full resize-y  text-black "}>
+                {blogPostText}
+              </Markdown> :
+                <textarea id="textarea"
+                  className="border-2 min-h-48 border-gray-400 rounded-b-xl   bg-gray-200 max-h-full resize-y w-[100%] text-black "
+                  ref={textAreaRef}
+                  onInput={(e) => {
+                    e.currentTarget.style.height = ""; e.currentTarget.style.height = e.currentTarget.scrollHeight + "px"
+                  }} value={blogPostText}
+                  onChange={(e) => {
+                    e.currentTarget.style.height = ""; e.currentTarget.style.height = e.currentTarget.scrollHeight + "px";
+                    setBlogPostText(e.target.value)
+                  }}
+                >
+                </textarea>
+              }
               <button type="button" className="transform rounded-md bg-primary-600/95 px-5 py-3 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300 " onClick={() => { blogPostText ? navigator.clipboard.writeText(blogPostText) : console.log("nothing to copy"); }}
               >Copy Text</button>
             </div>
