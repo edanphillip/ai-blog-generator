@@ -2,8 +2,9 @@
 'use client'
 import { IncomingMessage } from "http";
 // import "./air.css"
+import useAutosizeTextArea from "./useAutosizeTextArea";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Markdown from "react-markdown";
 import { BeatLoader } from "react-spinners";
 interface blogidea {
@@ -18,7 +19,13 @@ export default function Home() {
   const [blogTopicInput, setBlogTopicInput] = useState('');
   const [blogIdeaList, setBlogIdeaList] = useState<blogidea[]>([])
   const [selectedBlogIdea, setSelectedBlogIdea] = useState("drone")
-  const [blogPostText, setBlogPostText] = useState<blogpost>({ response: "" })
+  const [blogPostText, setBlogPostText] = useState("")
+
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  useAutosizeTextArea(textAreaRef.current, blogPostText);
+
+
   const getblogideas = async () => {
     setPart1IsLoading(true);
 
@@ -47,6 +54,7 @@ export default function Home() {
   }
   const writeblog = async (idea: string) => {
     setPart2IsLoading(true);
+    setBlogPostText("")
     try {
       var url = `/api/streamblog/${idea}/`
       const res: Response = await fetch(url, {
@@ -56,6 +64,7 @@ export default function Home() {
           'Content-Type': 'application/json'
         }
       })
+      console.log("blog stream recieved")
       const reader = res.body?.getReader();
       const decoder = new TextDecoder("utf-8");
       let toDisplayText = ""
@@ -78,32 +87,26 @@ export default function Home() {
               preDisplayText += decodedChunk
               if (done) {
                 break;
-                throw new Error("wtf homie it didnt work");
               }
               continue;
             }
           }
-
-          // let lines = decodedChunk.split("\\n")
-          // //loop until i get the full intro phrase
-          // //  variable which keeps all text
-          // // append to it then check if it contains 
-          // //subtract the intro phase and keep text after it.
-          // //loop through as normal
-          // const parsedlines = lines.map(line => {
-          //   // var parsedline = line.replace('{"function_call": {"name": "write", "arguments": "', "")
-          //   //   .replace('\\"response\\": \\"', "")
-          //   // toDisplayText = toDisplayText + parsedline;
-          //   toDisplayText = toDisplayText + line;
-          // }
           toDisplayText = toDisplayText + decodedChunk;
           console.log("chunk:", decodedChunk);
-          setBlogPostText({ response: toDisplayText })
+          if (toDisplayText.includes("\\n")) {
+            const newtext = toDisplayText.replace(/\\\\n/g, '')
+              .replace(/\\\\"\\\\n\}\"\}\}/g, '');
+            toDisplayText = newtext;
+          }
           if (done) {
+            // Find the index of the last period
+            const lastPeriodIndex = toDisplayText.lastIndexOf('.');
+            // Extract the substring up to the last period
+            toDisplayText = toDisplayText.slice(0, lastPeriodIndex + 1);
+            setBlogPostText(toDisplayText)
             break;
           }
-
-
+          setBlogPostText(toDisplayText)
         } catch (error) {
           console.log(error);
 
@@ -175,44 +178,65 @@ export default function Home() {
     } catch (error) {
       console.error(error);
     }
-
     setPart2IsLoading(false);
   }
+
   return (
-    <main className={`text-black flex min-h-screen flex-col  content-center w-9/12`}>
-      <div className="flex flex-col gap-y-5 w-[100%]">
+    <main className={`text-black flex min-h-screen flex-col  content-center px-10 `}>
+      <div className="flex flex-col gap-y-5 w-[100%] ">
         {/* PART 1 */}
-        <h1>AI Blog Generator</h1>
-        <p className="inline-block relative  ">Enter Blog Topic to Generate Blog Article Ideas</p>
-        <form action={getblogideas} className="relative ">
-          <input className="bg-gray-600 p-2 rounded-lg  w-[100%] " type="text" value={blogTopicInput} onChange={(e) => setBlogTopicInput(e.target.value)} />
-          <button type="submit" onSubmit={(e) => { e.preventDefault(); getblogideas(); }} className=" border-2 border-blue-400 inline-block align-top h-[100%] m-auto relative w-[20%] min-w-[50px]">Submit</button>
+        <h1 className="text-xl text-center text-primary-400
+        md:text-6xl sm:text-4xl">AI Blog Generator</h1>
+        <p className="inline-block relative font-semibold text-center ">Enter Blog Topic to Generate Blog Article Ideas</p>
+        <form action={getblogideas} className="relative flex flex-col">
+          <input className="bg-white p-2 rounded-lg  w-[100%] " type="text" value={blogTopicInput} onChange={(e) => setBlogTopicInput(e.target.value)} />
+          <button
+            type="submit"
+            onSubmit={(e) => { e.preventDefault(); getblogideas(); }}
+            className="transform  rounded-md bg-primary-600/95 px-5 py-3 my-2 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300 w-100%  "
+          >Submit</button>
         </form>
-        <div className="flex flex-col gap-4 justify-around p-4 border-2 border-white">
-          <h2 className="text-xl font-bold">Options:</h2>
-          <BeatLoader color="gray" loading={part1IsLoading} />
+
+        {/* PART 2 */}
+        <div className="flex flex-col gap-4 justify-around p-4 border-2 border-white w-full bg-gray-50  ">
           {/* <p className="flex " dangerouslySetInnerHTML={{ __html: response }}></p> */}
 
-          {/* PART 2 */}
-          <form action={() => writeblog(selectedBlogIdea)} className="relative flex flex-col gap-2 w-[100%]">
-            <BeatLoader color="white" className="" loading={part2IsLoading} />
-            {blogIdeaList &&
-              blogIdeaList.map((item, index) => {
-                return (
-                  <label key={index} className="" >
-                    <input type="radio" name="blogidea" id="radio" onChange={e => setSelectedBlogIdea(e.target.value)} value={item.idea} />
-                    {item.idea}
-                  </label>)
-              })
-            }
-            <button type="submit" className=" border-2 border-blue-400 inline-block align-top h-[100%] m-auto relative w-[20%] min-w-[50px]">Submit</button>
-          </form>
-          {/* PART 3*/}
-          {/* <Markdown className={"bg-slate-500"}>{blogPost?.response}</Markdown> */}
-          <textarea value={blogPostText?.response} className="resize-y text-black min-h-[800px]" onChange={(e) => setBlogPostText({ response: e.target.value })}>
-          </textarea>
-          <button type="button" className="transform rounded-md bg-primary-600/95 px-5 py-3 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300 min-w-[115px]  " onClick={() => { blogPostText.response ? navigator.clipboard.writeText(blogPostText.response) : console.log("nothing to copy"); }}
-          >Copy Text</button>
+          <div className="flex flex-col gap-4 md:flex-row  w-[100%]">
+
+            <form action={() => writeblog(selectedBlogIdea)} className=" flex w-[100%] flex-col gap-2 ">
+              <p className="inline-block font-semibold">Select a blog topic then generate the article using AI</p>
+              <BeatLoader color="gray" loading={part1IsLoading} />
+              <BeatLoader color="red" className="" loading={part2IsLoading} />
+              {blogIdeaList &&
+                blogIdeaList.map((item, index) => {
+                  return (
+                    <label key={index} className="" >
+                      <input type="radio" name="blogidea" id="radio" onChange={e => setSelectedBlogIdea(e.target.value)} value={item.idea} />
+                      {item.idea}
+                    </label>)
+                })
+              }
+              <button type="submit" className=" transform rounded-md bg-primary-600/95 px-5 py-3 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300  ">Generate</button>
+            </form>
+            {/* PART 3*/}
+            <div className="w-[100%] h-[680px] bg-gray-100 text-center flex flex-col gap-2">
+              {/* <Markdown className={"bg-slate-500"}>{blogPost?.response}</Markdown> */}
+              <textarea id="textarea"
+                ref={textAreaRef}
+                onInput={(e) => {
+                  e.currentTarget.style.height = ""; e.currentTarget.style.height = e.currentTarget.scrollHeight + "px"
+                }} value={blogPostText}
+                onChange={(e) => {
+                  e.currentTarget.style.height = ""; e.currentTarget.style.height = e.currentTarget.scrollHeight + "px";
+                  setBlogPostText(e.target.value)
+                }}
+                className="bg-gray-200 max-h-full resize-y w-[100%] text-black "
+              >
+              </textarea>
+              <button type="button" className="transform rounded-md bg-primary-600/95 px-5 py-3 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300 " onClick={() => { blogPostText ? navigator.clipboard.writeText(blogPostText) : console.log("nothing to copy"); }}
+              >Copy Text</button>
+            </div>
+          </div>
         </div>
       </div>
     </main>

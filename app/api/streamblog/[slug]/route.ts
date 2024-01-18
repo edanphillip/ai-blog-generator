@@ -36,5 +36,7 @@ export async function GET(request: Request, { params }: { params: { slug: string
   })
   //return output
   const stream = OpenAIStream(completion)
+  console.log("blog stream returned");
+
   return new StreamingTextResponse(stream);
 }
