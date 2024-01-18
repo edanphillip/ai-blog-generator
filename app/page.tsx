@@ -15,6 +15,8 @@ interface blogpost {
 }
 export default function Home() {
   const [part1IsLoading, setPart1IsLoading] = useState(false);
+  const [part1HasLoaded, setPart1HasLoaded] = useState(false);
+  const [part2HasLoaded, setPart2HasLoaded] = useState(false);
   const [part2IsLoading, setPart2IsLoading] = useState(false);
   const [blogTopicInput, setBlogTopicInput] = useState('');
   const [blogIdeaList, setBlogIdeaList] = useState<blogidea[]>([])
@@ -23,173 +25,120 @@ export default function Home() {
   const [showPreview, setShowPreview] = useState(true)
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-
   useAutosizeTextArea(textAreaRef.current, blogPostText);
 
   const [errorList, seterrorList] = useState<string[]>([])
   const getblogideas = async () => {
     setPart1IsLoading(true);
+    setPart1HasLoaded(false);
+    setBlogIdeaList([]);
     var query = blogTopicInput ? blogTopicInput : null;
     if (!query) {
       errorList.push("Invalid Query: " + query)
+      return;
     };
-    try {
-      var url = `/api/gpt/${query}/`
-      const { data } = await fetch(url, {
-        method: "GET",
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      })
-        .then(data => {
-          return data.json()
-        }
-        )
-      console.log("data:", data);
-      setBlogIdeaList([...data.blog_ideas])
-    } catch (error) {
-      console.error(error);
-      errorList.push(error as string)
+    const generate = async () => {
+      try {
+        var url = `/api/gpt/${query}/`
+        const { data } = await fetch(url, {
+          method: "GET",
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        })
+          .then(data => {
+            return data.json()
+          }
+          )
+        console.log("data:", data);
+        setBlogIdeaList([...data.blog_ideas])
+      } catch (error) {
+        console.error(error);
+        errorList.push(error as string)
+      }
     }
-
+    await generate();
     setPart1IsLoading(false);
+    setPart1HasLoaded(true);
     seterrorList([])
     setBlogTopicInput('');
 
   }
   const writeblog = async (idea: string) => {
     setPart2IsLoading(true);
+    setPart2HasLoaded(false);
     setBlogPostText("")
-    try {
-      var url = `/api/streamblog/${idea}/`
-      const res: Response = await fetch(url, {
-        method: "GET",
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      })
-      console.log("blog stream recieved")
-      const reader = res.body?.getReader();
-      const decoder = new TextDecoder("utf-8");
-      let preDisplayText = ""
-      let toDisplayText = ""
-      let trimmedBeginning = false
-      while (true) {
-        try {
-          const chunk = await reader?.read();
-          const { done, value } = chunk!;
-          let decodedChunk = decoder.decode(value);
 
-          //trim beginning of text  
-          if (!trimmedBeginning) {
-            //send all data to 1st pre-display variable
-            preDisplayText += decodedChunk;
-            //check if the characters that come before the actual response have been rendered
-            if (preDisplayText.includes(': \\"')) {
-              //when found, switch bugget and add the split pre-display to respective buckets
-              trimmedBeginning = true
-              var splitstring = preDisplayText.split(': \\"')
-              preDisplayText = splitstring[0]
-              toDisplayText = splitstring[1];
-              continue;
-              //break if done somehow.. shouldnt be possible if normal response is recieved
-            } else {
-              if (done) {
-                break;
+    const generate = async () => {
+      try {
+        var url = `/api/streamblog/${idea}/`
+        const res: Response = await fetch(url, {
+          method: "GET",
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        })
+        console.log("blog stream recieved")
+        const reader = res.body?.getReader();
+        const decoder = new TextDecoder("utf-8");
+        let preDisplayText = ""
+        let toDisplayText = ""
+        let trimmedBeginning = false
+        while (true) {
+          try {
+            const chunk = await reader?.read();
+            const { done, value } = chunk!;
+            let decodedChunk = decoder.decode(value);
+
+            //trim beginning of text  
+            if (!trimmedBeginning) {
+              //send all data to 1st pre-display variable
+              preDisplayText += decodedChunk;
+              //check if the characters that come before the actual response have been rendered
+              if (preDisplayText.includes(': \\"')) {
+                //when found, switch bugget and add the split pre-display to respective buckets
+                trimmedBeginning = true
+                var splitstring = preDisplayText.split(': \\"')
+                preDisplayText = splitstring[0]
+                toDisplayText = splitstring[1];
+                continue;
+                //break if done somehow.. shouldnt be possible if normal response is recieved
+              } else {
+                if (done) {
+                  break;
+                }
               }
+              continue;
             }
-            continue;
-          }
-          //then everything to 2nd bucket 
-          toDisplayText = toDisplayText + decodedChunk;
-          console.log("chunk:", decodedChunk);
-          if (toDisplayText.includes("\\n")) {
-            const newtext = toDisplayText.replace(/\\\\n/g, '\n')
-              .replace(/\\\\"\\\\n\}\"\}\}/g, '');
-            toDisplayText = newtext;
-          }
-          if (done) {
-            // Find the index of the last period
-            const lastPeriodIndex = toDisplayText.lastIndexOf('.');
-            // Extract the substring up to the last period
-            toDisplayText = toDisplayText.slice(0, lastPeriodIndex + 1);
+            //then everything to 2nd bucket 
+            toDisplayText = toDisplayText + decodedChunk;
+            console.log("chunk:", decodedChunk);
+            if (toDisplayText.includes("\\n")) {
+              const newtext = toDisplayText.replace(/\\\\n/g, '\n')
+                .replace(/\\\\"\\\\n\}\"\}\}/g, '');
+              toDisplayText = newtext;
+            }
+            if (done) {
+              // Find the index of the last period
+              const lastPeriodIndex = toDisplayText.lastIndexOf('.');
+              // Extract the substring up to the last period
+              toDisplayText = toDisplayText.slice(0, lastPeriodIndex + 1);
+              setBlogPostText(toDisplayText)
+              break;
+            }
             setBlogPostText(toDisplayText)
-            break;
+          } catch (error) {
+            console.log(error);
           }
-          setBlogPostText(toDisplayText)
-        } catch (error) {
-          console.log(error);
-
         }
-
+      } catch (error) {
+        console.error(error);
       }
-
-      // try {
-      //   let responseOmmited = false;
-      //   let concattedstream = "";
-      //   const stream = bod as unknown as Strea;
-      //   var sentence = "";
-      //   var presentence = "";
-      //   stream.on('data', (chunk: Buffer) => {
-      //     const payloadstring = chunk.toString();
-      //     concattedstream += payloadstring;
-      //     const payloads = concattedstream.split("\n\n");
-      //     const realpayloads = payloadstring.split("\n\n");
-      //     //omit response
-      //     if (!responseOmmited) {
-      //       for (const payload of payloads) {
-      //         if (payload.startsWith("data:") && payload.endsWith("}")) {
-      //           try {
-      //             var newpayload = payload.replace("data: ", "")
-      //             const data = JSON.parse(newpayload);
-      //             const chunk: undefined | string = data.choices[0].delta?.function_call.arguments;
-      //             if (chunk) {
-      //               presentence += chunk
-      //             }
-      //           } catch (error) {
-      //             console.error(`Error with JSON.parse and ${payload}.\n${error}`);
-      //           }
-      //         }
-      //       }
-      //       if (presentence.includes(`{\n  "response": "`)) {
-      //         responseOmmited = true;
-      //       }
-      //     }
-      //     else {
-      //       for (const payload of realpayloads) {
-      //         if (payload.startsWith("data:") && payload.endsWith("}")) {
-      //           try {
-      //             var newpayload = payload.replace("data: ", "")
-      //             const data = JSON.parse(newpayload);
-      //             const chunk: undefined | string = data.choices[0].delta?.function_call?.arguments;
-      //             if (chunk) {
-      //               sentence += chunk
-      //             }
-      //           } catch (error) {
-      //             console.error(`Error with JSON.parse and ${payload}.\n${error}`);
-      //           }
-      //         }
-      //       }
-      //       console.log("Sentence: \n", sentence)
-      //       if (concattedstream.includes('[DONE]'))
-      //         return;//break from stream
-      //     }
-      //   });
-      //   const jsondata = JSON.parse("{}");
-      //   // return jsondata;
-      //   console.log(jsondata)
-      // } catch (error) {
-      //   // return { error };
-      //   console.log(error)
-      // } 
-
-      // console.log("part2response:",);
-      // setPart2Response({ response: sentence! })
-    } catch (error) {
-      console.error(error);
     }
+    await generate();
+    setPart2HasLoaded(true);
     setPart2IsLoading(false);
   }
 
@@ -216,7 +165,7 @@ export default function Home() {
                 type="submit"
                 onSubmit={(e) => { e.preventDefault(); getblogideas(); }}
                 className="transform  rounded-md bg-primary-600/95 px-5 py-3 my-2 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300 w-100%  "
-              >Submit</button>
+              >Generate Article Ideas</button>
             </form>
             {/* PART 2 */}
             <form action={() => writeblog(selectedBlogIdea)} className=" flex w-[100%] flex-col gap-2 ">
@@ -226,13 +175,15 @@ export default function Home() {
               {blogIdeaList &&
                 blogIdeaList.map((item, index) => {
                   return (
-                    <label key={index} className="" >
+                    <label key={index} className="flex flex-row gap-2" >
                       <input type="radio" name="blogidea" id="radio" onChange={e => setSelectedBlogIdea(e.target.value)} value={item.idea} />
                       {item.idea}
                     </label>)
                 })
               }
-              <button type="submit" className=" transform rounded-md bg-primary-600/95 px-5 py-3 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300  ">Generate</button>
+              <button type="submit"
+                disabled={!part1HasLoaded}
+                className="transform rounded-md bg-primary-600/95 px-5 py-3 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300 disabled:bg-slate-300">Write Article</button>
             </form>
           </div>
           <div className="flex flex-col gap-4 md:flex-row  w-[100%]">
@@ -267,7 +218,7 @@ export default function Home() {
                 >
                 </textarea>
               }
-              <button type="button" className="transform rounded-md bg-primary-600/95 px-5 py-3 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300 " onClick={() => { blogPostText ? navigator.clipboard.writeText(blogPostText) : console.log("nothing to copy"); }}
+              <button type="button" disabled={!part2HasLoaded} className="disabled:bg-slate-300  transform rounded-md bg-primary-600/95 px-5 py-3 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300 " onClick={() => { blogPostText ? navigator.clipboard.writeText(blogPostText) : console.log("nothing to copy"); }}
               >Copy Text</button>
             </div>
           </div>
