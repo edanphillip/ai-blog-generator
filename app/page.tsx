@@ -1,40 +1,44 @@
 //app/page.tsx
 'use client'
-import { IncomingMessage } from "http";
+import { StreamingTextResponse } from "ai";
 // import "./air.css"
 import useAutosizeTextArea from "./useAutosizeTextArea";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Markdown from "react-markdown";
 import { BeatLoader } from "react-spinners";
 interface blogidea {
   idea: string,
 }
-interface blogpost {
-  response: string,
-}
 export default function Home() {
-  const [part1IsLoading, setPart1IsLoading] = useState(false);
-  const [part1HasLoaded, setPart1HasLoaded] = useState(false);
-  const [part2HasLoaded, setPart2HasLoaded] = useState(false);
-  const [part2IsLoading, setPart2IsLoading] = useState(false);
+  const [blogIdeasLoading, setBlogIdeasLoading] = useState(false);
+  const [blogIdeasLoaded, setBlogIdeasLoaded] = useState(false);
+  const [blogDoneWriting, setBlogDoneWriting] = useState(true);
+  const [mainSectionHidden, setMainSectionHidden] = useState(false);
   const [blogTopicInput, setBlogTopicInput] = useState('');
   const [blogIdeaList, setBlogIdeaList] = useState<blogidea[]>([])
-  const [selectedBlogIdea, setSelectedBlogIdea] = useState("drone")
+  const [selectedBlogIdea, setSelectedBlogIdea] = useState<string | null>()
   const [blogPostText, setBlogPostText] = useState("")
   const [showPreview, setShowPreview] = useState(true)
-
+  const [controller, setController] = useState<AbortController | null>(null)
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   useAutosizeTextArea(textAreaRef.current, blogPostText);
 
   const [errorList, seterrorList] = useState<string[]>([])
   const getblogideas = async () => {
-    setPart1IsLoading(true);
-    setPart1HasLoaded(false);
+    let controller = (new AbortController())
+    setController(controller)
+    let errors: string[] = []
+    seterrorList(errors)
+    var signal = controller.signal
+
+    setBlogIdeasLoading(true);
+    setBlogIdeasLoaded(false);
     setBlogIdeaList([]);
     var query = blogTopicInput ? blogTopicInput : null;
     if (!query) {
-      errorList.push("Invalid Query: " + query)
+      errors.push("Invalid blog topic")
+      await seterrorList(errors)
       return;
     };
     const generate = async () => {
@@ -45,7 +49,8 @@ export default function Home() {
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
-          }
+          },
+          signal,
         })
           .then(data => {
             return data.json()
@@ -54,39 +59,48 @@ export default function Home() {
         console.log("data:", data);
         setBlogIdeaList([...data.blog_ideas])
       } catch (error) {
+        setBlogIdeasLoading(false);
         console.error(error);
         errorList.push(error as string)
       }
     }
-    await generate();
-    setPart1IsLoading(false);
-    setPart1HasLoaded(true);
-    seterrorList([])
-    setBlogTopicInput('');
+    generate().then(() => {
+      setBlogIdeasLoading(false);
+      setBlogIdeasLoaded(true);
+      setBlogTopicInput('');
+    })
 
   }
   const writeblog = async (idea: string) => {
-    setPart2IsLoading(true);
-    setPart2HasLoaded(false);
+    setBlogDoneWriting(false);
     setBlogPostText("")
-
+    let controller = (new AbortController())
+    setController(controller)
+    var signal = controller.signal
     const generate = async () => {
       try {
         var url = `/api/streamblog/${idea}/`
-        const res: Response = await fetch(url, {
+        const res = await fetch(url, {
           method: "GET",
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
-          }
+          },
+          signal,
         })
-        console.log("blog stream recieved")
+        console.log("blog stream recieved", res)
         const reader = res.body?.getReader();
         const decoder = new TextDecoder("utf-8");
         let preDisplayText = ""
         let toDisplayText = ""
         let trimmedBeginning = false
-        while (true) {
+        console.time("timeout 3s start")
+        setTimeout(() => {
+          console.timeEnd("timeout 3s end")
+        }, 3000);
+        console.time("while loop start")
+        let looperrorcount = 0
+        while (true && looperrorcount < 3) {
           try {
             const chunk = await reader?.read();
             const { done, value } = chunk!;
@@ -97,10 +111,15 @@ export default function Home() {
               //send all data to 1st pre-display variable
               preDisplayText += decodedChunk;
               //check if the characters that come before the actual response have been rendered
-              if (preDisplayText.includes(': \\"')) {
+              if (preDisplayText.includes(': \\"') ||
+                (preDisplayText.includes(':\\"'))) {
                 //when found, switch bugget and add the split pre-display to respective buckets
                 trimmedBeginning = true
-                var splitstring = preDisplayText.split(': \\"')
+                let splitstring: string[] = [];
+                if (preDisplayText.includes(': \\"'))
+                  splitstring = preDisplayText.split(': \\"')
+                else if (preDisplayText.includes(':\\"'))
+                  splitstring = preDisplayText.split(':\\"')
                 preDisplayText = splitstring[0]
                 toDisplayText = splitstring[1];
                 continue;
@@ -130,16 +149,26 @@ export default function Home() {
             }
             setBlogPostText(toDisplayText)
           } catch (error) {
-            console.log(error);
+            looperrorcount++;
+            console.error(error);
           }
         }
+        if (looperrorcount > 2) { console.log("failed") }
       } catch (error) {
+        if (signal.aborted) {
+          setBlogPostText("Error Occured while generating")
+          setBlogDoneWriting(true);
+        }
         console.error(error);
+      } finally {
+        setController(null)
       }
     }
-    await generate();
-    setPart2HasLoaded(true);
-    setPart2IsLoading(false);
+    generate().then(
+      () => {
+        setBlogDoneWriting(true);
+      }
+    )
   }
 
   return (
@@ -147,31 +176,48 @@ export default function Home() {
 
       <div className="flex flex-col gap-y-2 w-[100%] ">
         <h1 className="text-xl text-center text-primary-400
-        md:text-6xl sm:text-4xl">AI Blog Generator</h1>
+        md:text-6xl sm:text-4xl my-4">AI Blog Generator</h1>
 
-        <div className="flex flex-row gap-4 justify-around p-4 border-2 border-white w-full bg-gray-50  ">
-          <div className="flex flex-col gap-y-2 w-[100%] ">
+        <button className="transform  rounded-md bg-primary-600/95 px-5 py-2 my-2 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300 w-100%  "
+          onClick={
+            () => setMainSectionHidden(!mainSectionHidden)
+          }>Hide Left Section</button>
+        <div className="flex flex-col lg:flex-row gap-4 justify-around p-4 border-2 border-black w-full bg-gray-50 ">
+          <div className={"flex flex-col  gap-y-2 w-[100%] " + (mainSectionHidden ? "hidden" : "")}>
 
             <p className="inline-block relative font-semibold text-center ">Enter Blog Topic to Generate Blog Article Ideas</p>
             {/* PART 1 */}
             <form action={getblogideas} className="relative flex flex-col">
+              <input className="border-2 border-gray-400 bg-white p-2 my-2 rounded-lg  w-[100%] " type="text" value={blogTopicInput} onChange={(e) => setBlogTopicInput(e.target.value)} />
               {errorList.map((err, index) => {
-                return <p key={index} className="text-red-400 text-md text-center bg-red-50 border-2 px-3 py-1 rounded-sm">
+                return <p key={index} className="text-primary-500-400 text-md text-center bg-red-50 border-2 px-3 py-1 rounded-sm">
                   {err}
                 </p>
               })}
-              <input className="border-2 border-gray-400 bg-white p-2 rounded-lg  w-[100%] " type="text" value={blogTopicInput} onChange={(e) => setBlogTopicInput(e.target.value)} />
-              <button
-                type="submit"
-                onSubmit={(e) => { e.preventDefault(); getblogideas(); }}
-                className="transform  rounded-md bg-primary-600/95 px-5 py-3 my-2 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300 w-100%  "
-              >Generate Article Ideas</button>
+              {(blogIdeasLoading && !blogIdeasLoaded && errorList.length == 0) ?
+                <div className="flex flex-col text-cente ">
+                  <div className="flex flex-row">
+                    <p className="w-full">blog ideas generating... </p>
+                    <button
+                      type="submit"
+                      onSubmit={(e) => { controller?.abort(); setController(null); console.log("aborted"); }}
+                      className="transform w-full rounded-md bg-red-600/95 px-5 py-2 my-2 font-medium text-primaryText-light transition-colors hover:bg-red-500/90  duration-300 w-100%  "
+                    >Abort</button>
+                  </div>
+                  <BeatLoader color="black" className=" w-20" loading={blogIdeasLoading} />
+                </div>
+                :
+                <button
+                  type="submit"
+                  onSubmit={(e) => { e.preventDefault(); getblogideas(); }}
+                  className="transform  rounded-md bg-primary-600/95 px-5 py-2 my-2 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300 w-100%  "
+                >Generate Article Ideas</button>
+              }
+
             </form>
             {/* PART 2 */}
-            <form action={() => writeblog(selectedBlogIdea)} className=" flex w-[100%] flex-col gap-2 ">
+            <form action={() => writeblog(selectedBlogIdea ? selectedBlogIdea : "drone")} className=" flex w-[100%] flex-col gap-2 ">
               <p className="inline-block font-semibold">Select a blog topic then generate the article using AI</p>
-              <BeatLoader color="gray" loading={part1IsLoading} />
-              <BeatLoader color="red" className="" loading={part2IsLoading} />
               {blogIdeaList &&
                 blogIdeaList.map((item, index) => {
                   return (
@@ -182,8 +228,11 @@ export default function Home() {
                 })
               }
               <button type="submit"
-                disabled={!part1HasLoaded}
-                className="transform rounded-md bg-primary-600/95 px-5 py-3 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300 disabled:bg-slate-300">Write Article</button>
+                disabled={blogIdeasLoading && !blogIdeasLoaded && (blogIdeaList.length == 0) || (blogIdeasLoaded && !blogDoneWriting) || selectedBlogIdea == null}
+                className="transform rounded-md bg-primary-600/95 px-5 py-2 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300 disabled:bg-slate-300">
+                {!blogDoneWriting ? "generating..." : "Write Article"}
+                <BeatLoader color="black" className="" loading={!blogDoneWriting} />
+              </button>
             </form>
           </div>
           <div className="flex flex-col gap-4 md:flex-row  w-[100%]">
@@ -202,7 +251,7 @@ export default function Home() {
                 </button>
               </div>
 
-              {showPreview ? <Markdown className={"prose w-[100%]lg:prose-xl border-2 min-h-48 border-gray-400 rounded-b-xl overflow-scroll bg-gray-100 max-h-full resize-y  text-black "}>
+              {showPreview ? <Markdown className={"text-center prose w-[100%]  border-2 min-h-48 border-gray-400 rounded-b-xl overflow-scroll bg-gray-100 max-h-full resize-y  text-black "}>
                 {blogPostText}
               </Markdown> :
                 <textarea id="textarea"
@@ -218,7 +267,7 @@ export default function Home() {
                 >
                 </textarea>
               }
-              <button type="button" disabled={!part2HasLoaded} className="disabled:bg-slate-300  transform rounded-md bg-primary-600/95 px-5 py-3 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300 " onClick={() => { blogPostText ? navigator.clipboard.writeText(blogPostText) : console.log("nothing to copy"); }}
+              <button type="button" disabled={!blogDoneWriting || blogPostText == ""} className="disabled:bg-slate-300  transform rounded-md bg-primary-600/95 px-5 py-3 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90  duration-300 " onClick={() => { blogPostText ? navigator.clipboard.writeText(blogPostText) : console.log("nothing to copy"); }}
               >Copy Text</button>
             </div>
           </div>
