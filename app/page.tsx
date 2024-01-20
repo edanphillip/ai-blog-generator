@@ -6,7 +6,7 @@ import useAutosizeTextArea from "./components/useAutosizeTextArea";
 import { useState, useRef, useEffect } from "react";
 import Markdown from "react-markdown";
 import { BeatLoader } from "react-spinners";
-import CustomNavbar from "./components/NavBar";
+import NavBar from "./components/NavBar";
 interface blogidea {
   idea: string,
 }
@@ -174,7 +174,7 @@ export default function Home() {
   return (
     <div className="flex flex-col w-screen overflow-x-clip">
 
-      <CustomNavbar />
+      <NavBar />
       <main className={`text-black flex min-h-screen flex-col  content-center px-10 `}>
 
         <div className="flex flex-col gap-y-2 w-[100%] ">

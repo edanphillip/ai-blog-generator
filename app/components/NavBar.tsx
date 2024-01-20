@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import CustomNavBarLink from './CustomNavBarLink';
 import CallToActionButton from './CallToActionButton';
-const CustomNavbar = () => {
+const NavBar = () => {
     const [hamburgerIsOpen, setHamburgerOpen] = useState(false);
     return (
         <nav className="bg-[#393939] border-gray-200">
@@ -31,4 +31,4 @@ const CustomNavbar = () => {
         </nav>
     )
 }
-export default CustomNavbar
+export default NavBar
