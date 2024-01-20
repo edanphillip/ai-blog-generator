@@ -9,13 +9,13 @@ import { usePathname } from 'next/navigation';
 const NavBar = () => {
 
     const currentRoute = usePathname();
-    const { isSignedIn, user, isLoaded } = useUser();
+    const { isSignedIn } = useUser();
     const [hamburgerIsOpen, setHamburgerOpen] = useState(false);
     return (
         <nav className="bg-[#393939] border-gray-200">
             <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2">
                 <Link href="/" className='flex hover:drop-shadow-xl shadow-tahiti-400'>
-                    <span className=" mx-4 self-center whitespace-nowrap text-2xl  font-semibold text-primaryText-light text-white">AI Blog Generator</span>
+                    <span className="mx-4 self-center whitespace-nowrap text-2xl  font-semibold text-primaryText-light text-white">AI Blog Generator</span>
                 </Link>
                 <button onClick={() => setHamburgerOpen(!hamburgerIsOpen)} type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden   focus:outline-none focus:ring-2 focus:ring-gray-200 " aria-controls="navbar-default" aria-expanded="false">
                     <span className="sr-only">Open main menu</span>
@@ -31,15 +31,12 @@ const NavBar = () => {
                             {currentRoute !== "/login"
                                 && <RegisterLink />
                             }
-                        </>
-                        }
+                        </>}
                         {isSignedIn && <>
                             <CustomNavBarLink route="/dashboard" text="Dashboard" />
                             <CallToActionButton route="/buytokens" className="transform rounded-md bg-gradient-to-t transition-all hover:from-primary-500 from-primary-700  bg-primary-600/95 px-4 py-1 font-medium text-white  font- hover:bg-primary-500/90" />
                             <li className='relative top-2'><UserButton afterSignOutUrl="/" /></li>
-                        </>
-                        }
-
+                        </>}
                     </ul>
                 </div>
             </div>

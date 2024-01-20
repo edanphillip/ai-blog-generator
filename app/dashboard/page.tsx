@@ -1,6 +1,5 @@
 //app/page.tsx
 'use client'
-import { StreamingTextResponse } from "ai";
 // import "./air.css"
 import useAutosizeTextArea from "../components/useAutosizeTextArea";
 import { useState, useRef } from "react";
@@ -15,7 +14,7 @@ import React from 'react'
 import { useUser } from "@clerk/nextjs";
 
 const Page = () => {
-  const { isSignedIn, user, isLoaded } = useUser();
+  const { isSignedIn, isLoaded } = useUser();
 
   if (!isLoaded) {
     return null;
@@ -28,7 +27,7 @@ const Page = () => {
   return <div>Not signed in</div>;
 }
 
-export function Dashboard() {
+function Dashboard() {
   const [blogIdeasLoading, setBlogIdeasLoading] = useState(false);
   const [blogIdeasLoaded, setBlogIdeasLoaded] = useState(false);
   const [blogDoneWriting, setBlogDoneWriting] = useState(true);
