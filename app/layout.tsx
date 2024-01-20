@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Hedvig_Letters_Sans as Font } from 'next/font/google'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Font({ weight: "400", subsets: ["latin"], display: "swap" })
 
 export const metadata: Metadata = {
   title: 'Create Next App',
