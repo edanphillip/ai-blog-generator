@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
-import { Hedvig_Letters_Sans as Font } from 'next/font/google'
+import { ClerkProvider } from '@clerk/nextjs'
+
+import { Inter as Font } from 'next/font/google'
 import './globals.css'
 
 const inter = Font({ weight: "400", subsets: ["latin"], display: "swap" })
@@ -16,7 +18,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className + "text-black bg-green-50"}>{children}</body>
+      <ClerkProvider >
+        <body className={inter.className + "text-black bg-green-50"}>{children}</body>
+      </ClerkProvider>
     </html>
   )
 }

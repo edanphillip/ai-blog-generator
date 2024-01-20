@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/nextjs": "^4.29.4",
     "ai": "^2.2.31",
     "markdown-air": "^0.0.4",
     "next": "14.0.4",

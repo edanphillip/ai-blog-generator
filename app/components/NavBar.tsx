@@ -1,10 +1,15 @@
 'use client'
-import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import CustomNavBarLink from './CustomNavBarLink';
 import CallToActionButton from './CallToActionButton';
+import { SignedIn, UserButton, useUser } from '@clerk/nextjs';
+import RegisterLink from './RegisterLink';
+import { usePathname } from 'next/navigation';
 const NavBar = () => {
+
+    const currentRoute = usePathname();
+    const { isSignedIn, user, isLoaded } = useUser();
     const [hamburgerIsOpen, setHamburgerOpen] = useState(false);
     return (
         <nav className="bg-[#393939] border-gray-200">
@@ -20,10 +25,20 @@ const NavBar = () => {
                 </button>
                 <div hidden={!hamburgerIsOpen} className=" w-full md:block md:w-auto" id="navbar-default">
                     <ul className="font-medium flex flex-col mt-4 p-4 border border-gray-100 rounded-lg rtl:space-x-reverse     
-                    md:p-0 md:flex-row md:space-x-8 md:mt-0 md:border-0">
+                    md:p-0 md:flex-row md:space-x-8 md:mt-0 md:border-0 text-white">
                         <CustomNavBarLink route="/" text='Home' />
-                        <CustomNavBarLink route="/login" text="Register/Login" />
-                        <CallToActionButton className="transform rounded-md bg-gradient-to-t transition-all hover:from-primary-500 from-primary-700  bg-primary-600/95 px-4 py-1 font-medium text-primaryText-light  font- hover:bg-primary-500/90" />
+                        {!isSignedIn && <>
+                            {currentRoute !== "/login"
+                                && <RegisterLink />
+                            }
+                        </>
+                        }
+                        {isSignedIn && <>
+                            <CustomNavBarLink route="/dashboard" text="Dashboard" />
+                            <CallToActionButton route="/buytokens" className="transform rounded-md bg-gradient-to-t transition-all hover:from-primary-500 from-primary-700  bg-primary-600/95 px-4 py-1 font-medium text-white  font- hover:bg-primary-500/90" />
+                            <li className='relative top-2'><UserButton afterSignOutUrl="/" /></li>
+                        </>
+                        }
 
                     </ul>
                 </div>

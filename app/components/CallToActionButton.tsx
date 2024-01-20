@@ -1,8 +1,19 @@
 'use client'
-const CallToActionButton = ({ className: classname = "", cta = "Purchase Tokens" }: { cta?: string, className?: string }) => {
-  return (<button onClick={() => { document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" }) }} className={"border-2 border-gray-500 transform rounded-md bg-primary-600/95 px-5 py-3 font-medium text-primaryText-light transition-colors hover:bg-primary-500/90 hover:text-primaryText-dark  duration-300 min-w-[115px]  " + classname}>
-    {cta}
-  </button>
+
+import { RedirectToSignIn, redirectToSignIn } from "@clerk/nextjs"
+import { redirect } from "next/navigation"
+
+const CallToActionButton = ({ route = "/login", className: classname = "", cta = "Purchase Tokens" }: { route: string, cta?: string, className?: string }) => {
+  return (
+    <>
+      <button
+        onClick={() => {
+          RedirectToSignIn({ afterSignInUrl: route })
+        }}
+        className={"hover:bg-primary-900 bg-primary-500  rounded-md block  duration-200 text-center py-2 pr-4 pl-3 border-b min-w-[100px] min-h-[30px] items-center text-lg font-medium text-primaryText-light md:hover:text-primary-300 border-primary-200/20   md:border- md:text-black transform hover:font-semibold transition-all hover:from-primary-500 from-primary-700  bg-primary-600/95 px-4  text-primaryText-light    " + classname}>
+        {cta}
+      </button>
+    </>
   )
 }
 
