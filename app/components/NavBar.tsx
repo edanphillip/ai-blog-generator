@@ -35,7 +35,7 @@ const NavBar = () => {
                         {isSignedIn && <>
                             <CustomNavBarLink route="/dashboard" text="Dashboard" />
                             <CallToActionButton route="/buytokens" className="transform rounded-md bg-gradient-to-t transition-all hover:from-primary-500 from-primary-700  bg-primary-600/95 px-4 py-1 font-medium text-white  font- hover:bg-primary-500/90" />
-                            <li className='relative top-2'><UserButton afterSignOutUrl="/" /></li>
+                            <li className='relative top-2  align-middle text-center items-center'><UserButton afterSignOutUrl="/" /></li>
                         </>}
                     </ul>
                 </div>

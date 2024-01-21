@@ -189,7 +189,7 @@ function Dashboard() {
   }
 
   return (
-    <div className="flex flex-col w-screen overflow-x-clip">
+    <div className="flex flex-col max-w-screen overflow-x-clip">
 
       <NavBar />
       <main className={`text-black flex min-h-screen flex-col  content-center px-10 `}>
@@ -215,16 +215,15 @@ function Dashboard() {
                   </p>
                 })}
                 {(blogIdeasLoading && !blogIdeasLoaded && errorList.length == 0) ?
-                  <div className="flex flex-col text-cente ">
+                  <div className="flex flex-col text-cente animate-[pulse]">
                     <div className="flex flex-row">
-                      <p className="w-full">blog ideas generating... </p>
                       <button
                         type="submit"
                         onSubmit={(e) => { controller?.abort(); setController(null); console.log("aborted"); }}
-                        className="transform w-full rounded-md bg-red-600/95 px-5 py-2 my-2 font-medium text-primaryText-light transition-colors hover:bg-red-500/90  duration-300 w-100%  "
+                        className="transform w-full animate-pulse rounded-md bg-red-600/95 px-5 py-2 my-2 font-medium text-primaryText-light transition-colors hover:bg-red-500/90  duration-300 w-100%  "
                       >Abort</button>
+                      <p className="w-full flex justify-center  align-middle items-center">generating<span className="animate-pulse">...</span>  </p>
                     </div>
-                    <BeatLoader color="black" className=" w-20" loading={blogIdeasLoading} />
                   </div>
                   :
                   <button

@@ -18,6 +18,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
+      </head>
       <ClerkProvider >
         <body className={inter.className + "text-black bg-green-50"}>{children}</body>
       </ClerkProvider>

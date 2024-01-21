@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^4.29.4",
+    "@stripe/stripe-js": "^2.3.0",
     "ai": "^2.2.31",
     "markdown-air": "^0.0.4",
     "next": "14.0.4",
@@ -19,7 +20,8 @@
     "react-markdown": "^9.0.1",
     "react-refresh": "^0.14.0",
     "react-refresh-utils": "^0.0.0",
-    "react-spinners": "^0.13.8"
+    "react-spinners": "^0.13.8",
+    "stripe": "^14.13.0"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",
