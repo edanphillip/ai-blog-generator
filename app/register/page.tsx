@@ -1,12 +1,12 @@
 import React from 'react'
 import NavBar from '../components/NavBar'
-import { SignIn } from '@clerk/nextjs'
+import { SignIn, SignUp } from '@clerk/nextjs'
 const page = () => {
   return (
     <div>
       <NavBar />
       <div className='flex mx-auto justify-center py-10'>
-        <SignIn signUpUrl='/register' />
+        <SignUp />
       </div>
     </div>
   )

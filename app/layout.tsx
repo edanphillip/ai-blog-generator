@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import { ClerkProvider } from '@clerk/nextjs'
 
-import { Inter as Font } from 'next/font/google'
+import { Space_Mono as Font } from 'next/font/google'
 import './globals.css'
 
-const inter = Font({ weight: "400", subsets: ["latin"], display: "swap" })
+import { dark, neobrutalism, shadesOfPurple } from '@clerk/themes';
+import { primary } from '@/tailwind.config';
+const font = Font({ weight: "400", subsets: ["latin"], display: "swap" })
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -17,12 +19,14 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={font.className}>
       <head>
         <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
       </head>
-      <ClerkProvider >
-        <body className={inter.className + "text-black bg-green-50"}>{children}</body>
+      <ClerkProvider appearance={{
+        variables: { colorPrimary: primary[600], fontFamily: font.style.fontFamily, fontSize: "24px" },
+      }}>
+        <body className={font.className + "bg-gradient-to-t from-pink-500 via-red-500 to-yellow-500   text-black   "}>{children}</body>
       </ClerkProvider>
     </html>
   )

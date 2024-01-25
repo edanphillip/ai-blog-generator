@@ -3,6 +3,7 @@ import PreviewPage from "./PreviewPage";
 
 const page = async () => {
   "use server"
+
   return (
     <div className='bg-[#90e0ef] min-h-screen'>
       <NavBar />

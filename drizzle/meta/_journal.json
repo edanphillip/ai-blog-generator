@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1705905697567,
+      "tag": "0000_huge_quasimodo",
+      "breakpoints": true
+    }
+  ]
+}
