@@ -1,14 +1,8 @@
 import { user } from "@/drizzle/schema"
 import { Clerk } from "@clerk/nextjs/server"
-import { connect } from "@planetscale/database"
-import { drizzle } from "drizzle-orm/planetscale-serverless"
+import { db } from "./db"
 
-const connection = connect({
-  host: process.env.DATABASE_HOST,
-  username: process.env.DATABASE_USERNAME,
-  password: process.env.DATABASE_PASSWORD
-})
-const db = drizzle(connection)
+
 export default async function syncClerkWithPlanetscale() {
   const userlist = await Clerk({ secretKey: process.env.CLERK_SECRET_KEY }).users.getUserList()
   console.log(userlist)

@@ -89,7 +89,7 @@ const config = {
   plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography"), require("daisyui")],
 
   daisyui: {
-    themes: ["forest"],
+    themes: ["aqua"],
   },
 }
 export default config

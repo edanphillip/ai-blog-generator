@@ -1,9 +1,6 @@
 import { tokenTransaction, user } from '@/drizzle/schema'
-import { connect } from '@planetscale/database'
-import { SQL, eq, sql } from 'drizzle-orm'
-import { MySqlDateTimeString, MySqlTimestamp, datetime } from 'drizzle-orm/mysql-core'
-import { drizzle } from 'drizzle-orm/planetscale-serverless'
-import React from 'react'
+import { eq, sql } from 'drizzle-orm'
+import { db } from './db'
 interface AddTokenTransactionProps {
   tokensUsed: number,
   clerkID: string,
@@ -15,13 +12,7 @@ const addTokenTransaction = async ({ tokensUsed, clerkID, userPrompt }: AddToken
   if (!clerkID) return console.error("wtf how is there no clerkID?")
   if (!userPrompt) return console.error("wtf how is there no userPrompt?")
   try {
-    //connect
-    const connection = connect({
-      host: process.env.DATABASE_HOST,
-      username: process.env.DATABASE_USERNAME,
-      password: process.env.DATABASE_PASSWORD
-    })
-    const db = drizzle(connection)
+    //connect 
     const records = await db.select({ user }).from(user).where(eq(user.clerkid, clerkID))
     if (records.length == 0) return console.error("wtf how is there no record of this clerkid?")
     const userId = records[0].user.id

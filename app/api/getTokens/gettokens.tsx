@@ -1,24 +1,16 @@
 "use server"
-import 'dotenv/config'
-import { drizzle } from 'drizzle-orm/planetscale-serverless'
-import { connect } from '@planetscale/database'
-import { tokenTransaction, user } from '@/drizzle/schema'
-import { eq } from 'drizzle-orm'
-import { User, currentUser } from '@clerk/nextjs/server'
 import { initializeClerkUserIfNotExists } from '@/app/lib/clerk'
+import { db } from '@/app/lib/db'
+import { tokenTransaction, user } from '@/drizzle/schema'
+import { User, currentUser } from '@clerk/nextjs/server'
+import 'dotenv/config'
+import { eq } from 'drizzle-orm'
 import Stripe from 'stripe'
 
-// create the connection
-const connection = connect({
-  host: process.env.DATABASE_HOST,
-  username: process.env.DATABASE_USERNAME,
-  password: process.env.DATABASE_PASSWORD
-})
+// create the connection DATABASE_PASSWORD
 const priceid_1000 = process.env.priceid_1000!
 const priceid_5000 = process.env.priceid_5000!
 const priceid_15000 = process.env.priceid_15000!
-
-const db = drizzle(connection)
 const gettokens = async (): Promise<number | null> => {
   try {
     const clerkUser = await currentUser();

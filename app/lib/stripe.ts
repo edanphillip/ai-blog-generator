@@ -1,17 +1,11 @@
 "use server"
-import Stripe from 'stripe';
-import { drizzle } from 'drizzle-orm/planetscale-serverless';
-import { connect } from '@planetscale/database';
+import getconflicts from '@/app/lib/getconflicts';
 import { user } from '@/drizzle/schema';
 import { eq } from 'drizzle-orm';
-import getconflicts from '@/app/lib/getconflicts';
+import Stripe from 'stripe';
+import { db } from './db';
 import error from './errorHandler';
-const connection = connect({
-  host: process.env.DATABASE_HOST,
-  username: process.env.DATABASE_USERNAME,
-  password: process.env.DATABASE_PASSWORD
-})
-const db = drizzle(connection)
+
 export async function initalizeStripeCustomerIfNotExists(email: string, clerkID: string) {
   // check if user's current stripe field is null (meaning that the clerk user is not connected to stripe)
   const record = await db.select({ stripeid: user.stripeid })

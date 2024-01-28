@@ -1,10 +1,9 @@
-import { Metadata, NextApiResponse } from 'next';
-import { Stripe } from 'stripe';
-import { headers } from 'next/headers'
-import { drizzle } from 'drizzle-orm/planetscale-serverless';
-import { connect } from '@planetscale/database';
-import { tokenTransaction, user, stripeTransaction } from '@/drizzle/schema';
+import { db } from '@/app/lib/db';
+import { stripeTransaction, user } from '@/drizzle/schema';
 import { eq } from 'drizzle-orm';
+import { NextApiResponse } from 'next';
+import { headers } from 'next/headers';
+import { Stripe } from 'stripe';
 
 const endpointSecret = process.env.endpointSecret;
 var count = 1;
@@ -14,12 +13,7 @@ export async function POST(req: Request, res: NextApiResponse) {
   if (!endpointSecret) return error(".env variables missing", 500);
   //TODO PROTECT ENDPOINT
 
-  const connection = connect({
-    host: process.env.DATABASE_HOST,
-    username: process.env.DATABASE_USERNAME,
-    password: process.env.DATABASE_PASSWORD
-  })
-  const db = drizzle(connection)
+
   var buffer = await req.text();
   var sig = headers().get("stripe-signature")
   let event;

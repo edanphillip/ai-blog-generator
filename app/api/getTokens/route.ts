@@ -1,6 +1,5 @@
 "use server"
 
-import { currentUser } from "@clerk/nextjs";
 import { NextApiResponse } from "next";
 import gettokens from "./gettokens";
 

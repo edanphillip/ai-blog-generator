@@ -4,6 +4,7 @@ import { OpenAIStream, StreamingTextResponse } from 'ai'
 import { currentUser } from "@clerk/nextjs";
 import addTokenTransaction from "@/app/lib/addTokenTransaction";
 import { acceptedStreamModels } from "@/app/types";
+import getTokenShopPrice from "@/app/lib/getprices";
 export async function GET(request: Request, { params }: { params: { prompt: string, model: acceptedStreamModels } }) {
   const error = (message: string, status = 400) => { return Response.json({ message: message }, { status: status }) }
   try {
@@ -18,15 +19,7 @@ export async function GET(request: Request, { params }: { params: { prompt: stri
     const [stream_server, stream_client] = stream.tee()
 
     calculateTokensUsed(stream_server)
-    let tokensUsed = 0
-    switch (model) {
-      case "gpt-3.5-turbo-16k-0613":
-        tokensUsed = 10
-        break;
-      case "gpt-4-1106-preview":
-        tokensUsed = 200
-        break;
-    }
+    let tokensUsed = getTokenShopPrice({ model, service: "article" })
     //add transaction to database
     addTokenTransaction({ tokensUsed, clerkID, userPrompt })
     return new StreamingTextResponse(stream_client)
@@ -41,8 +34,8 @@ const streamBlog = async (prompt: string, model: "gpt-4-1106-preview" | "gpt-3.5
   //collect variables
   var OPENAI_API_KEY = process.env.OPENAI_API_KEY//? key : process.env.OPENAI_API_KEY;
   let message = prompt ? prompt : "drone";
-  let maxlength = 100;
-  const finetuning = `Write an engaging blog post on the specified topic using Markdown format. Only respond to the prompt in Markdown format. DO NOT precede the markdown with any text nor follow the markdown with any more text. Incorporate underlined and italicized text strategically for emphasis. DONT write comments in the output. Utilize h1, h2, h3, h4 tags, and other tags to enhance visual appeal. Maintain a natural and human-like tone, avoiding a typical AI-generated style. Emphasize burstiness, dont shy from perplexity, and vary the temperature to achieve a more authentic feel. Ensure the blog post remains under ${maxlength} words. Craft the post around this topic:`
+  let maxlength = process.env.maxBlogLength ? process.env.maxBlogLength : 0;
+  const finetuning = `Write an engaging blog post on the specified topic using Markdown format. Only respond to the prompt in Markdown format. DO NOT precede the markdown with any text nor follow the markdown with any more text. Incorporate underlined and italicized text strategically for emphasis. DONT write comments in the output. Utilize h1, h2, h3, h4 markdown tags, and other tags to enhance visual appeal and separate sections logically. Maintain a natural and human-like tone, avoiding a typical AI-generated style. Emphasize burstiness, dont shy from perplexity, and vary the temperature to achieve a more authentic feel. Ensure the blog post remains under ${maxlength} words. Craft the post around this topic:`
   const schema = {
     type: "object",
     properties: {

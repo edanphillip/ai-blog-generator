@@ -21,19 +21,22 @@ const page = () => {
   In "Preview" mode, you can view the generated article in a formatted manner using Markdown.
   In "Edit" mode, you can modify the content directly in the textarea. `
   return (
-    <main className=' w-screen   h-fit'>
+    <main className=' w-screen  bg-accent h-fit'>
       <div  >
         {/* <Markdown className={" absolute  prose prose-xl text-center py-12 mx-[20%] leading-7 " + font.className}>
           {markdownn}
         </Markdown> */}
 
         <Markdown className={`   
-        prose-headings:text-secondary  
+        text-accent-content
+        prose-headings:text-neutral
+        prose-h1:underline-offset-[8px]
+        prose-h1:underline
         select-none 
         prose-headings:translate-y-[2px]
         prose-headings:translate-x-[2px]  
         prose
-        prose-xl
+        prose-lg
         text-center
         py-12
         md:mx-[20%]

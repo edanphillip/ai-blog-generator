@@ -33,7 +33,7 @@ export async function GET(request: Request, { params }: { params: { prompt: stri
 
   async function main() {
     // let finetuning = "I need you to only respond to the prompt in markdown format. DO NOT precede the markdown with any text nor follow the markdown with any more text. Generate 5 blog post ideas relating to this topic:  "
-    let finetuning = "I need you to only respond to the prompt. Generate an array of 6 blog post ideas relating to the topic. Try to vary your interpretation of the topic if you can: here is the topic:"
+    let finetuning = "I need you to only respond to the topic i will give you. Generate an array of 5 blog post ideas relating to the topic. Try to vary your interpretation of the topic if you can. Minimize placeholder text here is the topic:"
     // let finetuning = ""
     const completion = await openai.chat.completions.create({
       messages: [

@@ -1,5 +1,5 @@
 import { acceptedStreamModels } from '../types';
-type TokenShopParams = {
+export type TokenShopParams = {
   model: acceptedStreamModels,
   service: "article" | "blogpostideas"
 }
