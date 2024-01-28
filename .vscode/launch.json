@@ -1,6 +1,30 @@
 {
   "version": "0.2.0",
-  "configurations": [
+  "configurations": [ 
+    {
+      "name": "Stripe Listen",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run stripe:listen" 
+    },
+    {
+      "name": "Ngrok Clerk",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "ngrok http 3000" 
+    },
+    {
+      "name": "Drizzle Instrospect Studio",
+      "type": "node-terminal",
+      "request": "launch", 
+      "command": "npm run introspect"
+    },
+    {
+      "name": "Drizzle Browser",
+      "type": "chrome",
+      "request": "launch", 
+      "url": "https://local.drizzle.studio"
+    },
     {
       "name": "Next.js: debug server-side",
       "type": "node-terminal",
@@ -17,12 +41,19 @@
       "name": "Next.js: debug full stack",
       "type": "node-terminal",
       "request": "launch",
-      "command": "npm run dev",
+      "command": "  npm run dev ",
       "serverReadyAction": {
         "pattern": "- Local:.+(https?://.+)",
         "uriFormat": "%s",
         "action": "debugWithChrome"
       }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full Debug",
+      "configurations": ["Drizzle Instrospect Studio", "Next.js: debug full stack", "Ngrok Clerk", "Stripe Listen" ], 
+      "stopAll": true
     }
   ]
 }

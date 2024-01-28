@@ -1,28 +1,34 @@
-import NavBar from "../components/NavBar";
-import PreviewPage from "./PreviewPage";
+import PreviewPage, { redactedProduct } from "./PreviewPage";
+import getproducts from "../lib/getproducts";
+import Stripe from "stripe";
 
 const page = async () => {
   "use server"
+  var products = await getproducts();
+
+  let redactedProducts: redactedProduct[] = [];
+  let i = 0;
+  for (i = 0; i < products.length; i++) {
+    const stripeProduct = products[i];
+    const default_price = stripeProduct.default_price! as Stripe.Price
+    const price = default_price.unit_amount!
+
+    redactedProducts.push({
+      priceid: default_price.id,
+      name: stripeProduct.name,
+      currency: default_price.currency,
+      price: (price / 100).toFixed(2),
+    })
+  }
+
 
   return (
-    <div className='bg-[#90e0ef] min-h-screen'>
-      <NavBar />
-      <div className='my-20'>
-        <PreviewPage />
-        <stripe-pricing-table pricing-table-id="prctbl_1OafFqA6ywKF9vUQNc1gX8Mh"
-          publishable-key="pk_live_51OaJa0A6ywKF9vUQUKFe4e9XwZlv3wMdP2Z0PRv1tP7gTyjybslkRAo0zPUb1yOCDB6MlZ79EM3BEOdcB91iDWWp00593ofXiA">
-        </stripe-pricing-table>
+    <div className='self-stretch h-screen bg-accent bg-gradient-to-tr from-accent to-primary overflow-y-clip'>
+      <div>
+        <PreviewPage products={redactedProducts} />
       </div>
     </div>
   )
-}
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'stripe-pricing-table': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
-    }
-  }
 }
 
 export default page

@@ -11,21 +11,30 @@ export const primary = {
   800: '#ade8f4',
   900: '#caf0f8',
 }
-const config: Config = {
+
+const config = {
+  darkMode: ["class"],
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
   ],
-  plugins: [require("@tailwindcss/typography")],
+  prefix: "",
   theme: {
     extend: {
-      animation: {
-        text: 'text 5s ease infinite',
-        shake: 'shake 10s linear infinite',
-        movetext: 'movetext 0.75s forwards',
-      },
       keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
         movetext: {
           "0%": { bottom: "-0.2em", opacity: "1" },
           "50%": { bottom: "0.2em", opacity: ".75" },
@@ -46,6 +55,13 @@ const config: Config = {
           },
         },
       },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+        text: 'text 5s ease infinite',
+        shake: 'shake 10s linear infinite',
+        movetext: 'movetext 0.75s forwards',
+      },
       typography: {
         DEFAULT: {
           css: {
@@ -62,6 +78,18 @@ const config: Config = {
         primary
       }
     },
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
+  },
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography"), require("daisyui")],
+
+  daisyui: {
+    themes: ["forest"],
   },
 }
 export default config

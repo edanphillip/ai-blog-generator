@@ -12,6 +12,8 @@ var count = 1;
 export async function POST(req: Request, res: NextApiResponse) {
   const error = (message: string, status: number = 400) => { return Response.json({ message: message }, { status: status }) }
   if (!endpointSecret) return error(".env variables missing", 500);
+  //TODO PROTECT ENDPOINT
+
   const connection = connect({
     host: process.env.DATABASE_HOST,
     username: process.env.DATABASE_USERNAME,
@@ -27,18 +29,12 @@ export async function POST(req: Request, res: NextApiResponse) {
     return error(`Webhook Error: ${err.message}`, 400);
   }
   const handleNewStripeCustomer = async (stripecustomer: Stripe.Customer) => {
-
-    try {
-      await db.update(user)
-        .set({ stripeid: stripecustomer.id })
-        .where(eq(user.email, stripecustomer.email!))
-    } catch (error) {
-
-    }
+    await db.update(user)
+      .set({ stripeid: stripecustomer.id })
+      .where(eq(user.email, stripecustomer.email!))
   }
   const handlepaymentSuccess = async (payment: Stripe.PaymentIntent) => {
     try {
-
       // customer MUST exist or they couldnt have paid!?
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { typescript: true });
       if (!payment.customer) return error("wtf how is there no customer?")
@@ -81,7 +77,7 @@ export async function POST(req: Request, res: NextApiResponse) {
   switch (event.type) {
     case 'customer.created':
       const customer = event.data.object;
-      handleNewStripeCustomer(customer)
+      await handleNewStripeCustomer(customer)
       break;
     case 'payment_intent.succeeded':
       const succeededPayment = event.data.object;

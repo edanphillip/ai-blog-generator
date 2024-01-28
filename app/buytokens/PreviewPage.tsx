@@ -1,28 +1,56 @@
 "use client"
-import React from 'react'
+import { useUser } from '@clerk/nextjs';
+import { backOff } from 'exponential-backoff';
+import React, { useEffect, useState } from 'react'
+import gettokens from '../api/getTokens/gettokens';
+import { RingLoader } from 'react-spinners';
+import { CurrencyCode, getCurrencyCodeSymbol } from '../components/getCurrencyCodeSymbol';
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.import React from 'react';  
-export default function PreviewPage() {
-  React.useEffect(() => {
-    // Check to see if this is a redirect back from Checkout
-    const query = new URLSearchParams(window.location.search);
-    if (query.get('success')) {
-      console.log('Order placed! You will receive an email confirmation.');
+export interface redactedProduct {
+  name: string,
+  currency: string,
+  price: string,
+  priceid: string,
+}
+export default function PreviewPage({ products }: { products: redactedProduct[] }) {
+  const { isSignedIn, user } = useUser();
+  const [tokens, settokens] = useState<number | null>(null)
+  const [hovering, sethovering] = useState(false)
+  useEffect(() => {
+    if (isSignedIn) {
+      const tokens = async () => backOff(gettokens, { delayFirstAttempt: false, startingDelay: 1000, timeMultiple: 2 })
+        .then(res => {
+          settokens(res)
+        });
+      tokens();
     }
-
-    if (query.get('canceled')) {
-      console.log('Order canceled -- continue to shop around and checkout when you’re ready.');
-    }
-  }, []);
-
+  }, [isSignedIn]);
+  function handleCheckoutClicked(product: redactedProduct) {
+    fetch(`/api/checkout_sessions/${product.priceid}`, { method: "POST" }).then(res => { res.json() })
+  }
   return (
-    <form action="/api/checkout_sessions" method="POST">
-      <section>
-        <button type="submit" role="link" className='hover:bg-primary-900 bg-primary-700  rounded-md block  duration-200 text-center py-2 pr-4 pl-3 border-b min-w-[100px] min-h-[30px] items-center text-lg font-medium text-primaryText-light md:hover:text-primary-300 border-primary-200/20   md:border- md:text-black transform  d transition-all hover:from-primary-500 from-primary-700  bg-primary-600/95 px-4  text-primaryText-light    '>
-          Checkout
-        </button>
-      </section>
-    </form>
+    <div className="flex flex-col justify-self-stretch h-full  justify-center overflow-clip bg-clip-border">
+      <div className="bg-primary self-center p-2 rounded-lg justify-center w-fit mb-4">
+        {tokens && <h1 className='text-2xl  text-center text-primary-content'> You have <span className={tokens < 5000 ? "text-orange-600" : tokens < 1000 ? "text-red" : "text-green-300"}>{tokens}</span> tokens remaining. </h1>}
+        {!tokens && <RingLoader loading size={18} color={"gold"} />}
+
+      </div>
+      <div className='flex flex-wrap gap-4 justify-center overflow-clip bg-clip-border'>
+        {products.map(product =>
+          <form key={product.priceid} action={`/api/checkout_sessions/${product.priceid}`} method="post" className='bg-accent text-accent-content card card-bordered to-accent bg-gradient-to-b  from-neutral-100 border-2 rounded-3xl  bg-clip-border '>
+            <div className='max-w-[600px] flex flex-col gap-4 justify-center   p-4'>
+              <h1 className='text-2xl card-title'> {product.name}</h1>
+              <div className='text-2xl text-center font-black card-body'>{product.price + "" + getCurrencyCodeSymbol(product.currency.toUpperCase() as CurrencyCode)}</div>
+              <button type='submit' onClick={() => handleCheckoutClicked(product)} role="link" className='btn btn-secondary bg-gradient-radial border-none from-primary p-0 m-0  '>
+                Buy Now
+              </button>
+            </div>
+            <h1 className='font-bold'></h1>
+          </form>
+        )}
+      </div>
+    </div >
   );
 }

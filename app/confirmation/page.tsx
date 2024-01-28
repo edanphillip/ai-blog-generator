@@ -1,22 +1,27 @@
-import NavBar from "../components/NavBar";
+"use client"
 
-const page = async () => {
+import { useEffect, useState } from "react";
+
+const Home = () => {
+  const [text, settext] = useState("")
+  useEffect(() => {
+    // Check to see if this is a redirect back from Checkout
+    const query = new URLSearchParams(window.location.search);
+    if (query.get('success')) {
+      settext('Order placed! You will receive an email confirmation.');
+    }
+
+    if (query.get('canceled')) {
+      settext('Order canceled -- continue to shop around and checkout when you’re ready.');
+    }
+  }, []);
   return (
-    <div className='bg-[#90e0ef] h-screen'>
-      <NavBar />
+    <div className='bg-[#90e0ef] min-h-screen'>
       <div className='my-20'>
-        YOU WIN payment success
+        {text}
       </div>
     </div>
   )
 }
 
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'stripe-pricing-table': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
-    }
-  }
-}
-
-export default page
+export default Home
