@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Analytics } from '@vercel/analytics/react';
 import { ClerkProvider } from '@clerk/nextjs'
 import { Playpen_Sans as Font } from 'next/font/google'
 import './globals.css'
@@ -29,6 +30,7 @@ export default async function RootLayout({
             {children}
           </div >
           <Toaster />
+          <Analytics />
         </body  >
       </ClerkProvider>
     </html>

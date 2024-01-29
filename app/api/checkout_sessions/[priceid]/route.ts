@@ -5,14 +5,12 @@ import { initalizeStripeCustomerIfNotExists } from '@/app/lib/stripe';
 import { currentUser } from '@clerk/nextjs/server';
 import { log } from 'console';
 import Stripe from 'stripe';
-// const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 export async function POST(req: Request, { params }: { params: { priceid: string } }) {
   if (!params.priceid) return error("Invalid Params", 401)
   let priceid = params.priceid;
   const clerkUser = await currentUser();
   if (!clerkUser) return error("Invalid User", 401)
   if (!clerkUser.emailAddresses) return error("No Associated Email Address", 401)
-  // const db_userID = clerkUser.privateMetadata.userId
   //if first purchase
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { typescript: true });
   const baseURL = process.env.BASE_URL //TODO:verify this works on prod server then remove this comment

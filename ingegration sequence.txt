@@ -1,31 +1,31 @@
   things to do to migrate from dev for production
 {stripe}
-  -move stripe test products and prices to live mode
-  -gather price_ids for objects > vercel .env
-  priceid_1000,
-  priceid_5000,
-  priceid_15000, 
-  stripepublishtest, 
-  endpointSecret, 
-  -update stripe wenhook endpoints
+  # -copy stripe test products and prices to live mode
+  # -gather price_ids for objects > vercel .env
+  # priceid_1000=price_xxx
+  # priceid_5000=price_xxx
+  # priceid_15000= price_xxx 
+  # STRIPE_SECRET_KEY=sk_live_xxx
+  # endpointSecret= whsec_xxx
+  # -update stripe wenhook endpoints
 {clerk}
   -update clerk wenhook endpoints:  https://dashboard.clerk.com/ > app > configure > webhooks > add endpoint {host}/api/webhooks/clerk 
-  CLERK_WEBHOOK_SECRET=  
-  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY= 
-  CLERK_SECRET_KEY= 
+  # NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY= 
+  # CLERK_SECRET_KEY= 
   CLERK_WEBHOOK_SECRET= 
-  NEXT_PUBLIC_CLERK_SIGN_IN_URL=/login
-  BASE_URL=
-  NEXT_PUBLIC_CLERK_SIGN_UP_URL=/register
-  NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
-  NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
+  # BASE_URL=https://ai-blog-generator-eight.vercel.app/
+  # NEXT_PUBLIC_CLERK_SIGN_IN_URL=/login
+  # NEXT_PUBLIC_CLERK_SIGN_UP_URL=/register
+  # NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
+  # NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
 {planetscale}
-  DATABASE_HOST,
-  DATABASE_USERNAME,
-  DATABASE_PASSWORD,
-  DATABASE_URL, 
+  -update variables for PRODUCTION instance of planetscale, or upgrade db to PRODUCTION
+  DATABASE_HOST=
+  DATABASE_USERNAME=
+  DATABASE_PASSWORD=
+  DATABASE_URL= 
 {OPENAI}
   OPENAI_API_KEY https://platform.openai.com/api-keys
 {defaults}
-  defaultUserTokens, 
-  defaultArticleLength,
+  defaultUserTokens= 
+  defaultArticleLength=
