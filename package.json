@@ -60,7 +60,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "autoprefixer": "^10.0.1",
+    "autoprefixer": "^10.4.17",
     "daisyui": "^4.6.0",
     "drizzle-kit": "^0.20.13",
     "eslint": "^8",

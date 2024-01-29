@@ -48,7 +48,6 @@ export function Dashboard() {
     let errors: string[] = [];
     seterrorList(errors);
     var signal = controller.signal;
-
     setBlogIdeasLoading(true);
     setBlogIdeasLoaded(false);
     setBlogIdeaList([]);
@@ -56,35 +55,10 @@ export function Dashboard() {
     if (blogTopicInput == '') {
       setBlogTopicInput(randomTopic)
       query = randomTopic
-    } else {
-      if (!query) {
-        errors.push("Invalid blog topic");
-        seterrorList(errors);
-        return;
-      };
-    }
-    const generate = async () => {
-      try {
-        var url = `/api/gpt/${selectedModel}/${query}`;
-        const { data } = await fetch(url, {
-          method: "GET",
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          signal,
-        })
-          .then(data => {
-            return data.json();
-          }
-          );
-        console.log("data:", data);
-        setBlogIdeaList([...data.blog_ideas]);
-      } catch (error) {
-        setBlogIdeasLoading(false);
-        console.error(error);
-        errorList.push(error as string);
-      }
+    } else if (query == null) {
+      errors.push("Invalid blog topic");
+      seterrorList(errors);
+      return;
     };
     generate().then(() => {
       setBlogIdeasLoading(false);
@@ -92,7 +66,44 @@ export function Dashboard() {
       setBlogTopicInput('');
     });
 
+
+    async function generate() {
+      try {
+        var url = `/api/gpt/${selectedModel}/${query}`;
+        const res = await fetch(url, {
+          method: "GET",
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          signal,
+        })
+        console.log(res)
+        //error 
+        if (res.ok == false) {
+          await toastError(res);
+        } else {//success initiating
+          const { data } = await res.json();
+          setBlogIdeaList([...data.blog_ideas]);
+        }
+      } catch (error: any) {
+        if (signal.aborted) {
+          toast({ title: "Canceled Generating", description: "Aborted request to generate" })
+
+        } else {
+          toast({ title: "Error", description: error.message as string })
+
+        }
+      }
+    };
   };
+
+  async function toastError(res: Response) {
+    const errorres = await res.json();
+    console.log("data.error", errorres);
+    toast({ title: "Error Generating", description: errorres.status });
+
+  }
 
   async function writeblog(idea: string) {
     if (controller2?.signal.aborted !== true) {
@@ -108,7 +119,7 @@ export function Dashboard() {
     var signal = controller.signal;
     const generate = async () => {
       try {
-        var url = `/api/streamblog/${selectedModel}/${idea}`;
+        var url = `/api/streamblog/${selectedModel2}/${idea}`;
         const res = await fetch(url, {
           method: "GET",
           headers: {
@@ -159,7 +170,7 @@ export function Dashboard() {
             }
             //then everything to 2nd bucket 
             toDisplayText = toDisplayText + decodedChunk;
-            console.log("chunk:", decodedChunk);
+            // console.log("chunk:", decodedChunk);
             if (toDisplayText.includes("\\n")) {
               const newtext = toDisplayText.replace(/\\\\n/g, '\n')
                 .replace(/\\\\"\\\\n\}\"\}\}/g, '');
@@ -184,7 +195,7 @@ export function Dashboard() {
         if (looperrorcount > 2) { console.log("failed"); }
       } catch (error) {
         if (signal.aborted) {
-          setBlogPostText("Error Occured while generating");
+          setBlogPostText(blogPostText + "\\n\\n Aborted Generating");
           setBlogDoneWriting(true);
         }
         console.error(error);
@@ -202,9 +213,9 @@ export function Dashboard() {
 
 
   return (
-    <main className={`flex  flex-col max-w-screen overflow-x-clip text-neutral bg-neutral  content-center px-10 `}>
+    <main className={`flex  flex-col max-w-screen overflow-x-clip text-neutral    content-center px-10 `}>
       <div className="flex flex-col text-blue gap-y-2 w-[100%] ">
-        <div className="bg-accent text-accent-content flex flex-col lg:flex-row gap-4 justify-around p-4 border-2 border-black w-full  ">
+        <div className="h-[screen] bg-accent text-accent-content flex flex-col lg:flex-row gap-4 justify-around p-4 border-2 border-black w-full  ">
           <div className={"flex flex-col  gap-y-2 w-[100%] justify-stretch " + (mainSectionHidden ? "hidden" : "")}>
 
             {/* PART 1 */}
@@ -276,22 +287,20 @@ export function Dashboard() {
             <div className="w-[100%] h-[680px]  text-center flex flex-col gap-2">
               {(blogDoneWriting) &&
                 <div className="[&>*:not(:first-child)]:border-top-2 border-primary-content  pt-2  ">
-                  <form action={() => writeblog(selectedBlogIdea)} className="">
-                    <div className="flex flex-col w-full">
-                      <ModelSelectDropdown selectedModel={selectedModel2} setSelectedModel={setSelectedModel2} />
-                      <input className="border-2 text-black border-gray-400 bg-slate-100 p-2 my-2 rounded-lg  w-[100%] "
-                        type="text"
-                        value={selectedBlogIdea}
-                        onChange={(e) => setSelectedBlogIdea(e.target.value)} />
-                      <button type="submit"
-                        className="btn md:bottom-0  w-full  flex flex-row gap-4 justify-center transform rounded-md  px-5 py-2 font-medium transition-colors    duration-300  disabled:btn-disabled">
-                        {!blogDoneWriting ? "generating..." : "Write Article"}
-                        <div hidden={blogDoneWriting} className="flex flex-row justify-end align-middle items-center gap-1">
-                          {getTokenShopPrice({ model: selectedModel2, service: "article" })}<Image src={coin.src} alt="coin" height={22} width={22} />
-                        </div>
-                        <BeatLoader size={12} color="white" className="" loading={!blogDoneWriting} />
-                      </button>
-                    </div>
+                  <form action={() => writeblog(selectedBlogIdea)} className="flex flex-col gap-1 w-full">
+                    <ModelSelectDropdown selectedModel={selectedModel2} setSelectedModel={setSelectedModel2} />
+                    <input className="placeholder:italic placeholder:text-sm placeholder:text-accent/60 placeholder:blur-[0.5px] border-2 input input-accent text-accent   border-accent-content p-2   rounded-lg  w-full "
+                      type="text"
+                      value={selectedBlogIdea}
+                      onChange={(e) => setSelectedBlogIdea(e.target.value)} />
+                    <button type="submit"
+                      className="btn md:bottom-0  w-full  flex flex-row gap-4 justify-center transform rounded-md  px-5 py-2 font-medium transition-colors    duration-300  disabled:btn-disabled">
+                      {!blogDoneWriting ? "generating..." : "Write Article"}
+                      <div hidden={blogDoneWriting} className="flex flex-row justify-end align-middle items-center gap-1">
+                        {getTokenShopPrice({ model: selectedModel2, service: "article" })}<Image src={coin.src} alt="coin" height={22} width={22} />
+                      </div>
+                      <BeatLoader size={12} color="white" className="" loading={!blogDoneWriting} />
+                    </button>
                   </form>
                 </div>
               }

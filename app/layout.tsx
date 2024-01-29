@@ -26,7 +26,7 @@ export default async function RootLayout({
       }}>
         <body className={"badge-neutral  "}>
           <NavBar />
-          <div className={"bg-secondary to-primary from-neutral bg-gradient-to-tr "}>
+          <div className={"bg-secondary to-neutral via-accent from-neutral bg-gradient-to-t "}>
             {children}
           </div >
           <Toaster />

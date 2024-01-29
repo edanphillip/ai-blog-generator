@@ -16,16 +16,14 @@ export async function GET(request: Request, { params }: { params: { prompt: stri
     if (!prompt) return error("Invalid Params", 401)
     const userPrompt = prompt
     const stream = await streamBlog(userPrompt)
-    const [stream_server, stream_client] = stream.tee()
-
-    calculateTokensUsed(stream_server)
+    const stream_client = stream
     let tokensUsed = getTokenShopPrice({ model, service: "article" })
     //add transaction to database
     addTokenTransaction({ tokensUsed, clerkID, userPrompt })
     return new StreamingTextResponse(stream_client)
   } catch (error) {
     console.error("error streaming api response: ", error)
-    return Response.json({ status: 400, stream: null, error })
+    return Response.json({ stream: null, error }, { status: 400 })
   }
 }
 const streamBlog = async (prompt: string, model: "gpt-4-1106-preview" | "gpt-3.5-turbo-16k-0613" = "gpt-3.5-turbo-16k-0613") => {
