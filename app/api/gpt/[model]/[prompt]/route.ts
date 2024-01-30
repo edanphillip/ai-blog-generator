@@ -5,7 +5,7 @@ import getTokenShopPrice from "@/app/lib/getprices";
 import { acceptedStreamModels } from "@/app/types";
 import { currentUser } from "@clerk/nextjs";
 import OpenAI from "openai";
-export const maxDuration = 20; // This function can run for a maximum of x seconds
+export const maxDuration = 300; // This function can run for a maximum of 300 seconds
 export const dynamic = 'force-dynamic';
 export async function GET(request: Request, { params }: { params: { prompt: string, model: acceptedStreamModels } }) {
   const { prompt, model } = params
