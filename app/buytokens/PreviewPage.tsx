@@ -1,10 +1,8 @@
 "use client"
-import { useUser } from '@clerk/nextjs';
-import { backOff } from 'exponential-backoff';
-import React, { useEffect, useState } from 'react'
-import gettokens from '../api/getTokens/gettokens';
 import { RingLoader } from 'react-spinners';
+import { useData as useTokens } from '../DataContext';
 import { CurrencyCode, getCurrencyCodeSymbol } from '../components/getCurrencyCodeSymbol';
+import { useEffect } from 'react';
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.import React from 'react';  
@@ -15,18 +13,11 @@ export interface redactedProduct {
   priceid: string,
 }
 export default function PreviewPage({ products }: { products: redactedProduct[] }) {
-  const { isSignedIn, user } = useUser();
-  const [tokens, settokens] = useState<number | null>(null)
-  const [hovering, sethovering] = useState(false)
+  const { tokens, updateTokens } = useTokens()
   useEffect(() => {
-    if (isSignedIn) {
-      const tokens = async () => backOff(gettokens, { delayFirstAttempt: false, startingDelay: 1000, timeMultiple: 2 })
-        .then(res => {
-          settokens(res)
-        });
-      tokens();
-    }
-  }, [isSignedIn]);
+    updateTokens();
+  }, [updateTokens])
+
   function handleCheckoutClicked(product: redactedProduct) {
     fetch(`/api/checkout_sessions/${product.priceid}`, { method: "POST" }).then(res => { res.json() })
   }

@@ -15,6 +15,7 @@ const gettokens = async (): Promise<number | null> => {
   try {
     const clerkUser = await currentUser();
     if (!clerkUser) { throw Error("Invalid User. Cant Get Tokens"); }
+    initializeClerkUserIfNotExists(clerkUser);
     let baseTokens = Number.parseInt(process.env.defaultUserTokens!) || 0; // move to process.env 
     //get # of tokens spent
     let tokensSpent = await getTokensSpent(clerkUser)

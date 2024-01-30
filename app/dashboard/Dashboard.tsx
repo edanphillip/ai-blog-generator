@@ -1,18 +1,20 @@
 'use client';
+import { useToast } from "@/components/ui/use-toast";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Markdown from "react-markdown";
 import { BeatLoader } from "react-spinners";
+import { useData } from "../DataContext";
 import getTokenShopPrice from "../lib/getprices";
 import { acceptedStreamModels } from "../types";
 import { ModelSelectDropdown } from "./DropdownMenuRadioGroupSelectModel";
 import { blogidea } from "./page";
-import coin from "/public/coin.png";
 import topicsArray from "./randomTopic";
-import { useToast } from "@/components/ui/use-toast";
+import coin from "/public/coin.png";
 
 export function Dashboard() {
   const { toast } = useToast()
+  let { updateTokens } = useData()
   const [blogIdeasLoading, setBlogIdeasLoading] = useState(false);
   const [blogIdeasLoaded, setBlogIdeasLoaded] = useState(false);
   const [blogDoneWriting, setBlogDoneWriting] = useState(true);
@@ -33,6 +35,9 @@ export function Dashboard() {
 
   const [randomTopic, setRandomTopic] = useState('');
 
+  useEffect(() => {
+    updateTokens();
+  }, [blogDoneWriting, blogIdeasLoaded, updateTokens])
   useEffect(() => {
     // Generate a random index to pick a random topic from the array
     const randomIndex = Math.floor(Math.random() * topicsArray.length);
@@ -308,7 +313,7 @@ export function Dashboard() {
                 {blogPostText}
               </Markdown> :
                 <textarea id="textarea"
-                  className="scroll-auto lg:p-12 pt-2 text-neutral-content bg-neutral text-left prose prose-md  prose-headings:text-neutral-content w-[100%] border-2 min-h-48 rounded-b-lg overflow-scroll prose-strong:text-neutral-content prose-strong:font-bold max-h-full resize-y "
+                  className="scroll-auto lg:p-12 pt-2 text-neutral-content bg-neutral/95 text-left prose prose-md  prose-headings:text-neutral-content w-[100%] h-full border-2 min-h-48 rounded-b-lg overflow-scroll prose-strong:text-neutral-content prose-strong:font-bold max-h-full resize-y "
                   // ref={textAreaRef}
                   onInput={(e) => {
                   }} value={blogPostText}
@@ -365,3 +370,4 @@ export function Dashboard() {
     </main >
   );
 }
+
