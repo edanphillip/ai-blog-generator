@@ -4,7 +4,7 @@ import { db } from '@/app/lib/db'
 import { tokenTransaction, user } from '@/drizzle/schema'
 import { User, currentUser } from '@clerk/nextjs/server'
 import 'dotenv/config'
-import { eq } from 'drizzle-orm'
+import { and, eq, isNotNull } from 'drizzle-orm'
 import Stripe from 'stripe'
 
 // create the connection DATABASE_PASSWORD
@@ -33,11 +33,16 @@ async function getTokensSpent(clerkUser: User) {
   let userid = await getuserID(clerkUser)
   let userTokenTransacitons = await db.select()
     .from(tokenTransaction)
-    .where(eq(tokenTransaction.userId, userid))
+    .where(and(eq(tokenTransaction.userId, userid), isNotNull(tokenTransaction.amount)))
   let tokensSpent = 0
   userTokenTransacitons.forEach(transaction => {
     //TODO:make amount not null
-    tokensSpent += Number.parseInt(transaction.amount!)
+    if (Number.isNaN(transaction.amount) || !transaction.amount) {
+      return;
+    } else {
+      tokensSpent += Number.parseInt(transaction.amount)
+    }
+
   })
   return tokensSpent
 }
