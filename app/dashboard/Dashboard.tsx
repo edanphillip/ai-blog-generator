@@ -251,9 +251,9 @@ export function Dashboard() {
                   type="submit"
                   onSubmit={(e) => { e.preventDefault(); getblogideas(); }}
                   className="btn md:bottom-0  w-full  flex flex-row gap-4 justify-center transform rounded-md  px-5 py-2 font-medium transition-colors    duration-300  disabled:btn-disabled "
-                >Generate Article Ideas {getTokenShopPrice({ model: selectedModel, service: "blogpostideas" })}
+                >Generate Article Ideas
                   <div hidden={blogDoneWriting} className="flex flex-row justify-end align-middle items-center gap-1">
-                    <Image src={coin.src} alt="coin" height={22} width={22} />
+                    {getTokenShopPrice({ model: selectedModel, service: "blogpostideas" })}<Image src={coin.src} alt="coin" height={22} width={22} />
                   </div>
                 </button>
               }
