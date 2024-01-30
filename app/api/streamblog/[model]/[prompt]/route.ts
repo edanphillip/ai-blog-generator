@@ -5,6 +5,8 @@ import { currentUser } from "@clerk/nextjs";
 import addTokenTransaction from "@/app/lib/addTokenTransaction";
 import { acceptedStreamModels } from "@/app/types";
 import getTokenShopPrice from "@/app/lib/getprices";
+export const maxDuration = 5; // This function can run for a maximum of x seconds
+export const dynamic = 'force-dynamic';
 export async function GET(request: Request, { params }: { params: { prompt: string, model: acceptedStreamModels } }) {
   const error = (message: string, status = 400) => { return Response.json({ message: message }, { status: status }) }
   try {
