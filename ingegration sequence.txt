@@ -13,19 +13,21 @@
   # NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY= 
   # CLERK_SECRET_KEY= 
   CLERK_WEBHOOK_SECRET= 
-  # BASE_URL=https://ai-blog-generator-eight.vercel.app/
+  # - VERCEL_URL should update itself
   # NEXT_PUBLIC_CLERK_SIGN_IN_URL=/login
   # NEXT_PUBLIC_CLERK_SIGN_UP_URL=/register
   # NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
   # NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
 {planetscale}
+  # https://app.planetscale.com/ai-blog-generator/users
   -update variables for PRODUCTION instance of planetscale, or upgrade db to PRODUCTION
-  DATABASE_HOST=
-  DATABASE_USERNAME=
-  DATABASE_PASSWORD=
-  DATABASE_URL=
+  # DATABASE_HOST=aws.connect.psdb.cloud
+  # DATABASE_USERNAME= 
+  # DATABASE_PASSWORD= 
+  # DATABASE_URL= 
 {OPENAI}
-  OPENAI_API_KEY https://platform.openai.com/api-keys
+  # - https://platform.openai.com/api-keys
+  # OPENAI_API_KEY =
 {defaults}
   # defaultUserTokens=500
   # defaultArticleLength=2000
