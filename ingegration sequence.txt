@@ -31,3 +31,14 @@
 {defaults}
   # defaultUserTokens=500
   # defaultArticleLength=2000
+{google search console}
+ # get Client ID
+ # set redirect domain
+ {when switchin domains}
+ # set google dev console redirect domain https://console.cloud.google.com/apis/credentials/
+ # update clerk wenhook endpoints:  https://dashboard.clerk.com/ > app > configure > webhooks > add endpoint {host}/api/webhooks/clerk 
+ # -update clerk redirect urls
+ # -update stripe wenhook endpoints
+ # -update stripe business url
+ # -link domain to vercel
+ # -assign vercel domain

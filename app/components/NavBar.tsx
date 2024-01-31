@@ -1,12 +1,12 @@
 'use client'
-import Link from 'next/link';
-import { useState } from 'react';
-import CustomNavBarLink from './CustomNavBarLink';
-import PurchaseTokensButton from './CallToActionButton';
 import { UserButton, useUser } from '@clerk/nextjs';
-import RegisterLink from './RegisterLink';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState } from 'react';
 import { RingLoader } from 'react-spinners';
+import PurchaseTokensButton from './CallToActionButton';
+import CustomNavBarLink from './CustomNavBarLink';
+import RegisterLink from './RegisterLink';
 
 const NavBar = () => {
     const currentRoute = usePathname();

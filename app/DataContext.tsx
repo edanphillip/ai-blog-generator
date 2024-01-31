@@ -1,5 +1,5 @@
 'use client'
-import { ReactNode, cache, createContext, useContext, useState } from "react";
+import { ReactNode, createContext, useContext, useState } from "react";
 import gettokens from "./api/getTokens/gettokens";
 
 export type DataContextValueProps = {

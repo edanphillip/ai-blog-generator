@@ -1,4 +1,3 @@
-import type { Config } from 'tailwindcss'
 
 export const primary = {
   100: '#03045e',

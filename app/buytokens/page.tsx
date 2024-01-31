@@ -1,6 +1,6 @@
-import PreviewPage, { redactedProduct } from "./PreviewPage";
-import getproducts from "../lib/getproducts";
 import Stripe from "stripe";
+import getproducts from "../lib/getproducts";
+import PreviewPage, { redactedProduct } from "./PreviewPage";
 
 const page = async () => {
   "use server"

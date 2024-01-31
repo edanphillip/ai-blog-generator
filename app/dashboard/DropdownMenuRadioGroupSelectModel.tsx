@@ -1,7 +1,5 @@
 //app/page.tsx
 'use client';
-import React from 'react';
-import { acceptedStreamModels } from "../types";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,6 +8,8 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import React from 'react';
+import { acceptedStreamModels } from "../types";
 
 export function ModelSelectDropdown(props: { selectedModel: acceptedStreamModels; setSelectedModel: React.Dispatch<React.SetStateAction<acceptedStreamModels>>; }) {
   function handleValueChange(value: acceptedStreamModels) {

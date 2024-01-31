@@ -1,4 +1,6 @@
-import { mysqlTable, primaryKey, unique, varchar, int, decimal, timestamp, tinyint } from "drizzle-orm/mysql-core"
+import { decimal, int, mysqlTable, primaryKey, timestamp, tinyint, unique, varchar } from "drizzle-orm/mysql-core";
+
+
 export const stripeTransaction = mysqlTable("StripeTransaction", {
 	transactionId: varchar("transaction_id", { length: 15 }).notNull(),
 	userId: int("user_id").notNull(),

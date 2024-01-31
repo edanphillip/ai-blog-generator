@@ -2,12 +2,12 @@ import { initializeClerkUser } from '@/app/lib/clerk';
 import { db } from '@/app/lib/db';
 import { getDatabaseMatches } from "@/app/lib/getDatabaseMatches";
 import { user } from '@/drizzle/schema';
+import { WebhookEvent } from '@clerk/nextjs/server';
 import { log } from 'console';
 import { eq } from 'drizzle-orm';
 import { NextApiResponse } from 'next';
 import { headers } from 'next/headers';
-import { WebhookEvent } from '@clerk/nextjs/server'
-import { Webhook } from 'svix'
+import { Webhook } from 'svix';
 
 export async function POST(req: Request, res: NextApiResponse) {
   const error = (message: string, status: number = 400) => { return Response.json({ message: message }, { status: status }) }

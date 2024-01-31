@@ -1,8 +1,8 @@
 "use client"
+import { useEffect } from 'react';
 import { RingLoader } from 'react-spinners';
 import { useData as useTokens } from '../DataContext';
 import { CurrencyCode, getCurrencyCodeSymbol } from '../components/getCurrencyCodeSymbol';
-import { useEffect } from 'react';
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.import React from 'react';  

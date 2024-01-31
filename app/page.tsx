@@ -1,5 +1,4 @@
 
-import React from 'react'
 import Markdown from 'react-markdown'
 const page = () => {
   const markdownn = `# Step-by-Step Guide
