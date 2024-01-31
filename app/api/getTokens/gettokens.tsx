@@ -11,7 +11,7 @@ import Stripe from 'stripe'
 const priceid_1000 = process.env.priceid_1000!
 const priceid_5000 = process.env.priceid_5000!
 const priceid_15000 = process.env.priceid_15000!
-const gettokens = async (): Promise<number | null> => {
+const fetchCurrentUserTokens = async (): Promise<number | null> => {
   try {
     const clerkUser = await currentUser();
     if (!clerkUser) { throw Error("Invalid User. Cant Get Tokens"); }
@@ -102,6 +102,6 @@ async function getuserID(clerkUser: User) {
   const userid = records[0].id
   return userid
 }
-export default gettokens
+export default fetchCurrentUserTokens
 
 

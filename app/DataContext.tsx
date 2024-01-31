@@ -1,6 +1,6 @@
 'use client'
 import { ReactNode, createContext, useContext, useState } from "react";
-import gettokens from "./api/getTokens/gettokens";
+import fetchCurrentUserTokens from "./api/getTokens/gettokens";
 
 export type DataContextValueProps = {
   tokens: number | null,
@@ -17,7 +17,7 @@ interface ContextProviderProps {
 export const DataContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
   const [tokens, setTokens] = useState<number | null>(0);
   const updateTokens = async () => {
-    setTokens(await gettokens())
+    setTokens(await fetchCurrentUserTokens())
   }
   const data: DataContextValueProps = {
     tokens,
