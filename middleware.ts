@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 // See https://clerk.com/docs/references/nextjs/auth-middleware for more information about configuring your Middleware
 
 export default authMiddleware({
+  debug: true,
   publicRoutes: ["/", "/login", "/register", "/api/webhooks/clerk", "/api/webhooks/stripe", "/register/verify-email-address"],
   afterAuth(auth, req, evt) {
     // Handle users who aren't authenticated
@@ -29,5 +30,5 @@ export default authMiddleware({
 });
 
 export const config = {
-  matcher: [""],
+  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/(api|trpc)(.*)"],
 }; 
