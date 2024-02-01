@@ -43,7 +43,7 @@ export async function POST(req: Request, { params }: { params: { priceid: string
         },
       ],
       invoice_creation: { enabled: true },
-      customer_update: { address: "auto" },
+      customer_update: { address: "never" },
       customer: customerID,
       client_reference_id: clerkUser.id + " " + new Date().toISOString(),
       mode: 'payment',
