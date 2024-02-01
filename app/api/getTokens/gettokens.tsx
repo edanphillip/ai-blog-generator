@@ -42,12 +42,16 @@ async function getTokensSpent(userid: number) {
   let userTokenTransacitons = await db.select()
     .from(tokenTransaction)
     .where(and(eq(tokenTransaction.userId, userid), isNotNull(tokenTransaction.amount)))
+  console.log("userTokenTransacitons:", userTokenTransacitons);
   let tokensSpent = 0
+  console.log("tokensSpent:", tokensSpent);
   userTokenTransacitons.forEach(transaction => {
     //TODO:make amount not null
     if (Number.isNaN(transaction.amount) || !transaction.amount) {
+      console.log("transaction.amount:", transaction.amount);
       return;
     } else {
+      console.log("transaction.amount:", transaction.amount);
       tokensSpent += Number.parseInt(transaction.amount)
     }
   })
@@ -59,8 +63,11 @@ async function getNumTokensPurchased(userID: number) {
   const userrecords = await db.select({ stripeid: user.stripeid })
     .from(user)
     .where(eq(user.id, userID))
+
+  console.log("userrecords:", userrecords);
   if (userrecords.length == 0) throw Error("Invalid ClerkID")
   const sripeid = userrecords[0].stripeid
+  console.log("sripeid:", sripeid);
   if (!sripeid) {
     // Stripe ID not set for user  so return
     return 0
@@ -69,6 +76,7 @@ async function getNumTokensPurchased(userID: number) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { typescript: true });
   // const stripePaymentIntents = await stripe.checkout.sessions.list({ customer: sripeid, status: "complete" })
   const sessions = await stripe.checkout.sessions.list({ customer: sripeid, status: "complete", expand: ['data.line_items.data.price', 'data.payment_intent'] })
+  console.log("sessions:", sessions);
   sessions.data.forEach(session => {
     let intent = session.payment_intent as Stripe.PaymentIntent;
     if (intent.status == "succeeded") {
@@ -89,6 +97,8 @@ async function getNumTokensPurchased(userID: number) {
           default:
             line_tokens = 0
         }
+        console.log("line_tokens:", line_tokens);
+
         if (line_tokens > 0) {
           tokensPurchased += (line_tokens * quantity)
         }
