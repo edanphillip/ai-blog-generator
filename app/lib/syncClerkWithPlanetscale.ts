@@ -3,7 +3,7 @@ import { Clerk } from "@clerk/nextjs/server"
 import { db } from "./db"
 
 
-export default async function syncClerkWithPlanetscale() {
+export default async function syncClerkWithPlanetscale() { //deprecated
   const userlist = await Clerk({ secretKey: process.env.CLERK_SECRET_KEY }).users.getUserList()
   console.log(userlist)
   userlist.forEach(clerkuser => {
