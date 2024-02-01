@@ -11,30 +11,18 @@ import Stripe from 'stripe'
 const priceid_1000 = process.env.priceid_1000!
 const priceid_5000 = process.env.priceid_5000!
 const priceid_15000 = process.env.priceid_15000!
-const fetchCurrentUserTokens = async (): Promise<number | null> => {
-  try {
-    const clerkUser = await currentUser();
-    if (!clerkUser) { throw Error("Invalid User. Cant Get Tokens"); }
-    initializeClerkUserIfNotExists(clerkUser);
-    let baseTokens = Number.parseInt(process.env.defaultUserTokens!) || 0; // move to process.env 
-    //get # of tokens spent
+const fetchTokensByCurrentUser = async (): Promise<number> => {
 
-    let userid = await getuserID(clerkUser)
-    let tokensSpent = await getTokensSpent(userid)
-    //get # of tokens purchased
-    const tokensPurchased = await getNumTokensPurchased(userid)
-    //calculate # of tokens remaining
-    const tokens = tokensPurchased - tokensSpent
-    return tokens;
-  } catch (error) {
-    console.log("error getting tokens", error)
-    return null
-  }
+  const clerkUser = await currentUser();
+  if (!clerkUser) { throw Error("Invalid User. Cant Get Tokens"); }
+  await initializeClerkUserIfNotExists(clerkUser);
+  //get # of tokens spent 
+  let userid = await getuserID(clerkUser)
+  let tokens = await fetchTokensByUserID(userid)
+  return tokens;
 }
-
-export async function fetchUserIDTokens(userID: number) {
+export async function fetchTokensByUserID(userID: number) {
   try {
-    let baseTokens = Number.parseInt(process.env.defaultUserTokens!) || 0; // move to process.env 
     //get # of tokens spent 
     let tokensSpent = await getTokensSpent(userID)
     //get # of tokens purchased
@@ -111,12 +99,11 @@ async function getuserID(clerkUser: User) {
     .from(user)
     .where(eq(user.clerkid, clerkUser.id))
   if (records.length == 0) {
-    initializeClerkUserIfNotExists(clerkUser)
     throw Error("Clerk User Id Not Found in Database.")
   }
   const userid = records[0].id
   return userid
 }
-export default fetchCurrentUserTokens
+export default fetchTokensByCurrentUser
 
 

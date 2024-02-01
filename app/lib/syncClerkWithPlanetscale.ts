@@ -11,7 +11,7 @@ export default async function syncClerkWithPlanetscale() {
     const email = clerkuser.emailAddresses.find(email => email.id == clerkuser.primaryEmailAddressId!)?.emailAddress
     if (!email) { return }
     db.insert(user)
-      .values({ clerkid, email, tokens: 500 })
+      .values({ clerkid, email })
       .catch(err => {
         console.log(err)
       })

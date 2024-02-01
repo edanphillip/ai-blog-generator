@@ -2,7 +2,7 @@ import { tokenTransaction, user } from "@/drizzle/schema";
 import { User } from "@clerk/nextjs/server";
 import { error } from "console";
 import { and, eq, sql } from "drizzle-orm";
-import { fetchUserIDTokens as fetchTokensByUserID } from "../api/getTokens/gettokens";
+import { fetchTokensByUserID } from "../api/getTokens/gettokens";
 import { db } from './db';
 import { getDatabaseMatches, getDatabaseMatches2 } from "./getDatabaseMatches";
 export const initializeClerkUserIfNotExists = async (clerkUser: User) => {
@@ -29,7 +29,9 @@ export const initializeClerkUser = async (clerkUser: User) => {
   //get matches that are not deleted
   if (!email) throw new Error("Initializing User failed, code 1011");
   const emailConflicts = await getDatabaseMatches2(user, user.email, email, user.deleted, 0);
-  let filteredEmailConflicts = emailConflicts.filter(e => { e.clerkid != clerkid })
+  let filteredEmailConflicts = emailConflicts.filter(e => {
+    return e.clerkid !== clerkid
+  })
   let initialTokens = await calculateStarterTokens(filteredEmailConflicts);
 
   await db.insert(user)
