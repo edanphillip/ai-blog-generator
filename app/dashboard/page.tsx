@@ -5,10 +5,9 @@ export interface blogidea {
 }
 
 import { useUser } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
 import { useEffect, useState } from 'react';
 import { Dashboard } from "./Dashboard";
-
+export const dynamic = "force-dynamic"
 const Page = () => {
   const [loadingPage, setloadingPage] = useState(true)
   const { isSignedIn, isLoaded } = useUser();
@@ -17,9 +16,13 @@ const Page = () => {
       setloadingPage(false)
   }, [isSignedIn, isLoaded])
 
-  if (!isLoaded && loadingPage) { return <div className="flex flex-col justify-center items-center h-screen bg-secondary"><BeatLoader loading color="white" /></div>; } else
-    if (isSignedIn && isLoaded) { return <Dashboard /> }
-    else { redirect("/login") }
+  //if user/page loading
+  if (!isLoaded || loadingPage) { return <div className="flex flex-col justify-center items-center h-screen bg-secondary"><BeatLoader loading color="white" /></div>; }
+  //if user/page loading
+  else if (isSignedIn && isLoaded) { return <Dashboard /> }
+  //verify signed in stage
+  else { console.error("isSignedIn && !isLoaded") }
+  // else { redirect("/login") }
 }
 
 export default Page;
