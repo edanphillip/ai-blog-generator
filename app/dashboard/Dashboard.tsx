@@ -93,7 +93,7 @@ export function Dashboard() {
         }
       } catch (error: any) {
         if (signal.aborted) {
-          toast({ title: "Canceled Generating", description: "Aborted request to generate" })
+          toast({ title: "Canceled Generating", description: "Aborted Article Generation" })
 
         } else {
           toast({ title: "Error", description: error.message as string })
@@ -105,7 +105,7 @@ export function Dashboard() {
 
   async function toastError(res: Response) {
     const errorres = await res.json();
-    console.log("data.error", errorres);
+    console.error("data.error", errorres);
     toast({ title: "Error Generating", description: errorres.status });
 
   }
@@ -133,6 +133,10 @@ export function Dashboard() {
           },
           signal,
         });
+
+        if (res.ok == false) {
+          await toastError(res);
+        }
         console.log("blog stream recieved", res);
         const reader = res.body?.getReader();
         const decoder = new TextDecoder("utf-8");
@@ -141,7 +145,8 @@ export function Dashboard() {
         let trimmedBeginning = false;
         let looperrorcount = 0;
         let tokens_used = 0;
-        while (true && looperrorcount < 3) {
+        //read text from gpt
+        while (true && looperrorcount < 6) {
           try {
             const chunk = await reader?.read();
             const { done, value } = chunk!;
@@ -197,8 +202,18 @@ export function Dashboard() {
           }
         }
         console.log("tokens used: ", tokens_used);
-        if (looperrorcount > 2) { console.log("failed"); }
-      } catch (error) {
+        if (looperrorcount > 5) {
+          throw Error("failed to read");
+        }
+        console.log(res)
+      } catch (error: any) {//error handling
+        if (signal.aborted) {
+          toast({ title: "Canceled Generating", description: "Stopped generating." })
+
+        } else {
+          toast({ title: "Error", description: "An Unexpected Error occurred. Please try again later." })
+          console.error(error.message as string)
+        }
         if (signal.aborted) {
           setBlogPostText(blogPostText + "\\n\\n Aborted Generating");
           setBlogDoneWriting(true);
@@ -206,13 +221,10 @@ export function Dashboard() {
         console.error(error);
       } finally {
         setController2(null);
-      }
-    };
-    generate().then(
-      () => {
         setBlogDoneWriting(true);
       }
-    );
+    };
+    generate()
   };
 
 
@@ -291,8 +303,9 @@ export function Dashboard() {
 
             <div className="w-[100%] h-[680px]  text-center flex flex-col gap-2">
               {(blogDoneWriting) &&
-                <div className="[&>*:not(:first-child)]:border-top-2 border-primary-content  pt-2  ">
+                <div className="[&>*:not(:first-child)]:border-top-2 border-primary-content   ">
                   <form action={() => writeblog(selectedBlogIdea)} className="flex flex-col gap-1 w-full">
+                    <h2 className="inline-block relative font-semibold text-center text-xl">Generate Blog Article</h2>
                     <ModelSelectDropdown selectedModel={selectedModel2} setSelectedModel={setSelectedModel2} />
                     <input className="placeholder:italic placeholder:text-sm placeholder:text-accent/60 placeholder:blur-[0.5px] border-2 input input-accent text-accent   border-accent-content p-2   rounded-lg  w-full "
                       type="text"

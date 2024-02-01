@@ -13,6 +13,9 @@ export async function POST(req: Request, { params }: { params: { priceid: string
   if (!clerkUser.emailAddresses) return error("No Associated Email Address", 401)
   //if first purchase
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { typescript: true });
+  const vercelUrl = process.env.VERCEL_URL;
+
+  console.log(`The application is hosted at: ${vercelUrl}`);
   const baseURL = "http://" + process.env.VERCEL_URL //TODO:verify this works on prod server then remove this comment
   const success_url = baseURL + "?success=true"
   const cancel_url = baseURL + "?canceled=true"
