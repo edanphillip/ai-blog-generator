@@ -24,10 +24,10 @@ export default async function RootLayout({
       <ClerkProvider signInUrl='/login' signUpUrl='/register' appearance={{
         variables: { fontFamily: font.style.fontFamily, fontSize: "22px" },
       }}>
-        <body className={"badge-neutral  "}>
+        <body className={"badge-neutral "}>
           <DataContextProvider>
             <NavBar />
-            <div className={"bg-secondary to-neutral via-accent from-neutral bg-gradient-to-t "}>
+            <div className={"bg-secondary to-neutral via-accent from-neutral bg-gradient-to-t h-screen pt-16"}>
               {children}
             </div >
             <Toaster />

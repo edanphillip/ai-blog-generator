@@ -42,7 +42,6 @@ export const tokenTransaction = mysqlTable("TokenTransaction", {
 export const user = mysqlTable("User", {
 	id: int("id").autoincrement().notNull(),
 	email: varchar("email", { length: 255 }).notNull(),
-	tokens: int("tokens"),
 	clerkid: varchar("clerkid", { length: 255 }),
 	stripeid: varchar("stripeid", { length: 255 }),
 	deleted: tinyint("deleted").default(0),
@@ -50,6 +49,6 @@ export const user = mysqlTable("User", {
 (table) => {
 	return {
 		userId: primaryKey({ columns: [table.id], name: "User_id"}),
-		email: unique("email").on(table.email),
+		clerkid: unique("clerkid").on(table.clerkid),
 	}
 });

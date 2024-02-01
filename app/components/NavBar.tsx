@@ -3,7 +3,6 @@ import { UserButton, useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { RingLoader } from 'react-spinners';
 import PurchaseTokensButton from './CallToActionButton';
 import CustomNavBarLink from './CustomNavBarLink';
 import RegisterLink from './RegisterLink';
@@ -14,7 +13,7 @@ const NavBar = () => {
     const { isSignedIn, isLoaded } = useUser();
     const [hamburgerIsOpen, setHamburgerOpen] = useState(false);
     return (
-        <div className={"bg-primary border-gray-200"}>
+        <div className={"absolute z-50 w-screen  badge-neutral   border-gray-200"}>
             <div className="max-w-screen-2xl flex flex-col md:flex-row items-center justify-between mx-auto py-2 ">
                 <div className='relative'>
                     <Link href="/" className='select-none absolute z-10 top-[1px] left-[1px]  text-accent-content font-extrabold flex hover:drop-shadow-xl shadow-accent-content shadow-tahiti-400 mx-4 self-center whitespace-nowrap text-2xl '>AI Blog Generator</Link>
@@ -32,11 +31,6 @@ const NavBar = () => {
                     <ul className="font-medium flex flex-col mt-4 p-4 border border-gray-100 rounded-lg rtl:space-x-reverse     
                     md:p-0 md:flex-row md:space-x-8 md:mt-0 md:border-0 ">
                         <CustomNavBarLink route="/" text='Home' />
-                        {!isLoaded && <>
-                            {currentRoute !== "/login"
-                                && <RingLoader size={22} />
-                            }
-                        </>}
                         {isLoaded && !isSignedIn && <>
                             {currentRoute !== "/login"
                                 && <RegisterLink />

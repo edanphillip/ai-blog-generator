@@ -1,9 +1,6 @@
-import { initializeClerkUser } from '@/app/lib/clerk';
 import { db } from '@/app/lib/db';
-import { getDatabaseMatches } from "@/app/lib/getDatabaseMatches";
 import { user } from '@/drizzle/schema';
 import { WebhookEvent } from '@clerk/nextjs/server';
-import { log } from 'console';
 import { eq } from 'drizzle-orm';
 import { NextApiResponse } from 'next';
 import { headers } from 'next/headers';
@@ -26,11 +23,12 @@ export async function POST(req: Request, res: NextApiResponse) {
       const email = event.data.email_addresses[0].email_address;//verify that its their email first
       //add this user to the planetscale database      
       try {
-        const clerkidconflicts = await getDatabaseMatches(user, user.clerkid, event.data.id);
-        const emailConflicts = await getDatabaseMatches(user, user.email, email);
-        if (clerkidconflicts.length > 0) { error("clerk id match, user already exists", 400) }
-        else if (emailConflicts.length > 0) log("email already exists in planetscale")
-        else { initializeClerkUser({ email, clerkid: event.data.id }) }
+        // const clerkidconflicts = await getDatabaseMatches(user, user.clerkid, event.data.id);
+        // const emailConflicts = await getDatabaseMatches(user, user.email, email);
+        // if (clerkidconflicts.length > 0) { error("clerk id match, user already exists", 400) }
+        // else if (emailConflicts.length > 0) log("email already exists in planetscale")
+        // else { initializeClerkUserIfNotExists({ email, clerkid: event.data.id }) }
+        console.log("webhook: user successfily created", event)
       } catch (error: any) {
         console.error(error)
       }
@@ -44,7 +42,8 @@ export async function POST(req: Request, res: NextApiResponse) {
       break;
     }
     case 'user.deleted': {
-      await db.delete(user)
+      await db.update(user)
+        .set({ deleted: 1 })
         .where(eq(user.clerkid, event.data.id!))
         .execute().then(res => {
           console.log("deleted", res);

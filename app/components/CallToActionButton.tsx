@@ -19,7 +19,7 @@ const PurchaseTokensButton = ({ route = "/login", className: classname = "", cta
         <Image className={hovering ? "animate-spin" : ""} src={coin.src} alt="coin" height={22} width={22} />
         {!hovering && <>
           {tokens && <p>{tokens}</p>}
-          {!tokens && <RingLoader size={18} color="white" />}
+          {tokens == null && <RingLoader size={18} color="white" />}
         </>
         }
         <span hidden={!hovering}>{cta}</span>

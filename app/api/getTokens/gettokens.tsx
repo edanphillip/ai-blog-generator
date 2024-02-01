@@ -18,11 +18,13 @@ const fetchCurrentUserTokens = async (): Promise<number | null> => {
     initializeClerkUserIfNotExists(clerkUser);
     let baseTokens = Number.parseInt(process.env.defaultUserTokens!) || 0; // move to process.env 
     //get # of tokens spent
-    let tokensSpent = await getTokensSpent(clerkUser)
+
+    let userid = await getuserID(clerkUser)
+    let tokensSpent = await getTokensSpent(userid)
     //get # of tokens purchased
-    const tokensPurchased = await getNumTokensPurchased(clerkUser.id)
+    const tokensPurchased = await getNumTokensPurchased(userid)
     //calculate # of tokens remaining
-    const tokens = baseTokens + tokensPurchased - tokensSpent
+    const tokens = tokensPurchased - tokensSpent
     return tokens;
   } catch (error) {
     console.log("error getting tokens", error)
@@ -30,8 +32,22 @@ const fetchCurrentUserTokens = async (): Promise<number | null> => {
   }
 }
 
-async function getTokensSpent(clerkUser: User) {
-  let userid = await getuserID(clerkUser)
+export async function fetchUserIDTokens(userID: number) {
+  try {
+    let baseTokens = Number.parseInt(process.env.defaultUserTokens!) || 0; // move to process.env 
+    //get # of tokens spent 
+    let tokensSpent = await getTokensSpent(userID)
+    //get # of tokens purchased
+    const tokensPurchased = await getNumTokensPurchased(userID)
+    //calculate # of tokens remaining
+    const tokens = tokensPurchased - tokensSpent
+    return tokens;
+  } catch (error) {
+    throw new Error("error getting tokens")
+  }
+}
+
+async function getTokensSpent(userid: number) {
   let userTokenTransacitons = await db.select()
     .from(tokenTransaction)
     .where(and(eq(tokenTransaction.userId, userid), isNotNull(tokenTransaction.amount)))
@@ -43,16 +59,15 @@ async function getTokensSpent(clerkUser: User) {
     } else {
       tokensSpent += Number.parseInt(transaction.amount)
     }
-
   })
   return tokensSpent
 }
 
-async function getNumTokensPurchased(clerkID: string) {
+async function getNumTokensPurchased(userID: number) {
   //validate user ever even purchased tokens
   const userrecords = await db.select({ stripeid: user.stripeid })
     .from(user)
-    .where(eq(user.clerkid, clerkID))
+    .where(eq(user.id, userID))
   if (userrecords.length == 0) throw Error("Invalid ClerkID")
   const sripeid = userrecords[0].stripeid
   if (!sripeid) {

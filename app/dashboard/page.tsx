@@ -17,7 +17,7 @@ const Page = () => {
   }, [isLoaded])
 
   //if user/page loading
-  if (!isLoaded || loadingPage) { return <div className="flex flex-col justify-center items-center h-screen bg-secondary"><BeatLoader loading color="white" /></div>; }
+  if (!isLoaded || loadingPage) { return <div className="absolute top-0 w-screen flex flex-col justify-center items-center h-screen bg-accent gap-2 text-4xl font-extrabold">Loading Dashboard...<BeatLoader loading color="black" /></div>; }
   //if signed in
   else if (!isSignedIn) { console.error("page loaded but user signed out") }
   else { return <Dashboard /> }
