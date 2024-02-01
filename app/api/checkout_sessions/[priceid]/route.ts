@@ -16,7 +16,7 @@ export async function POST(req: Request, { params }: { params: { priceid: string
   const vercelUrl = process.env.VERCEL_URL;
 
   console.log(`The application is hosted at: ${vercelUrl}`);
-  const baseURL = "http://" + process.env.VERCEL_URL //TODO:verify this works on prod server then remove this comment
+  const baseURL = "http://" + process.env.BASE_URL //TODO:verify this works on prod server then remove this comment
   const success_url = baseURL + "?success=true"
   const cancel_url = baseURL + "?canceled=true"
   try {
