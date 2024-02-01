@@ -30,6 +30,8 @@ export async function POST(req: Request, { params }: { params: { priceid: string
     const customerID = await initalizeStripeCustomerIfNotExists(email.emailAddress, clerkUser.id);
     if (!customerID) return error("Error getting customerID from stripe", 500)
     const session = await stripe.checkout.sessions.create({
+      allow_promotion_codes: true,
+
       line_items: [
         {
           // Provide the exact Price ID (for example, pr_1234) of the product you want to sell

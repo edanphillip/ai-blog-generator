@@ -42,3 +42,4 @@
  # -update stripe business url
  # -link domain to vercel
  # -assign vercel domain
+ # update stripe email domains https://dashboard.stripe.com/settings/emails
