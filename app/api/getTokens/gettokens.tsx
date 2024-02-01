@@ -60,6 +60,7 @@ async function getTokensSpent(userid: number) {
 
 async function getNumTokensPurchased(userID: number) {
   //validate user ever even purchased tokens
+  console.log("userID:", userID);
   const userrecords = await db.select({ stripeid: user.stripeid })
     .from(user)
     .where(eq(user.id, userID))
@@ -78,9 +79,36 @@ async function getNumTokensPurchased(userID: number) {
   const sessions = await stripe.checkout.sessions.list({ customer: sripeid, status: "complete", expand: ['data.line_items.data.price', 'data.payment_intent'] })
   console.log("sessions:", sessions);
   sessions.data.forEach(session => {
-    let intent = session.payment_intent as Stripe.PaymentIntent;
-    if (intent.status == "succeeded") {
+    let intent = session.payment_intent as Stripe.PaymentIntent | null;
+    console.log("intent:", intent);
+    //intent can be null if user used a promo code
+
+    if (intent?.status == "succeeded") {
       // if (session.payment_status == "paid") {
+      session.line_items?.data.forEach(lineitemdata => {
+        let quantity = lineitemdata.quantity || 0
+        let line_tokens = 0;
+        switch (lineitemdata.price?.id) {
+          case priceid_1000:
+            line_tokens = 1000
+            break;
+          case priceid_5000:
+            line_tokens = 5000
+            break;
+          case priceid_15000:
+            line_tokens = 15000
+            break;
+          default:
+            line_tokens = 0
+        }
+        console.log("line_tokens:", line_tokens);
+
+        if (line_tokens > 0) {
+          tokensPurchased += (line_tokens * quantity)
+        }
+      });
+    }
+    else if (session.payment_status == "paid") {
       session.line_items?.data.forEach(lineitemdata => {
         let quantity = lineitemdata.quantity || 0
         let line_tokens = 0;
