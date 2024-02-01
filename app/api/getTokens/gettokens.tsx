@@ -24,9 +24,12 @@ const fetchTokensByCurrentUser = async (): Promise<number> => {
 export async function fetchTokensByUserID(userID: number) {
   try {
     //get # of tokens spent 
+    // let tokensSpent = await getTokensSpent(userID)
     let tokensSpent = await getTokensSpent(userID)
+    console.log("tokensSpent:", tokensSpent);
     //get # of tokens purchased
     const tokensPurchased = await getNumTokensPurchased(userID)
+    console.log("tokensPurchased:", tokensPurchased);
     //calculate # of tokens remaining
     const tokens = tokensPurchased - tokensSpent
     return tokens;
