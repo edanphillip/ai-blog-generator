@@ -5,7 +5,7 @@ import { useState } from "react"
 import { RingLoader } from "react-spinners"
 import { useData } from "../DataContext"
 import coin from "/public/coin.png"
-const PurchaseTokensButton = ({ route = "/login", className: classname = "", cta = "Get Tokens" }: { route: string, cta?: string, className?: string }) => {
+const PurchaseTokensButton = ({ route = "/register", className: classname = "", cta = "Get Tokens" }: { route: string, cta?: string, className?: string }) => {
 
   const [hovering, setHovering] = useState(false)
   const { tokens } = useData();
