@@ -1,5 +1,8 @@
-import { SignIn } from '@clerk/nextjs'
-const page = () => {
+import { SignIn, useUser } from '@clerk/nextjs';
+import { redirect } from 'next/navigation';
+const Page = () => {
+  const { isLoaded, isSignedIn } = useUser();
+  if (isLoaded && isSignedIn) redirect("/dashboard")
   return (
     <div>
       <div className='flex mx-auto justify-center py-10'>
@@ -9,4 +12,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page
