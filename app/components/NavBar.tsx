@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import PurchaseTokensButton from './CallToActionButton';
 import CustomNavBarLink from './CustomNavBarLink';
-import RegisterLink from './RegisterLink';
+import TryNowLink from './RegisterLink';
 const NavBar = () => {
     const currentRoute = usePathname();
     const { isSignedIn, isLoaded } = useUser();
@@ -22,16 +22,19 @@ const NavBar = () => {
                     </div>
                     <div hidden={!hamburgerIsOpen} className=" w-full md:block md:w-auto" id="navbar-default">
                         <ul onClick={() => setHamburgerOpen(false)} className="font-medium flex flex-col p-4  rounded-lg rtl:space-x-reverse     
-                    md:p-0 md:flex-row md:space-x-8 md:mt-0 md:border-0 ">
+                    md:p-0 md:flex-row md:space-x-2 md:mt-0 md:border-0 ">
                             <CustomNavBarLink route="/" text='Home' />
+                            <CustomNavBarLink route="/faq" text="FAQs" />
                             {isLoaded && !isSignedIn && <>
+                                <CustomNavBarLink route="/pricing" text="Pricing" />
                                 {currentRoute !== "/login"
                                     && currentRoute !== "/register"
-                                    && <RegisterLink />
+                                    && <TryNowLink />
                                 }
                             </>}
                             {isLoaded && isSignedIn && <>
                                 <CustomNavBarLink route="/dashboard" text="Dashboard" />
+                                <CustomNavBarLink route="/ContactUs" text="Contact Us" />
                                 <PurchaseTokensButton route="/buytokens" className="transform rounded-md bg-gradient-to-t transition-all px-4 py-1 justify-center font-medium " />
                                 <li className={'flex flex-row relative gap-2 mt-4 md:mt-0 justify-center  align-middle text-center items-center '}>
                                     <UserButton afterSignOutUrl="/" />

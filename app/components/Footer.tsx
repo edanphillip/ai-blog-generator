@@ -1,7 +1,10 @@
-import Link from 'next/link'
-import ContactForm from './ContactForm'
+"use client"
+import Link from 'next/link';
+import ContactForm from './ContactForm';
 
+import { useUser } from '@clerk/nextjs';
 const Footer = () => {
+  const { isSignedIn, isLoaded } = useUser();
   const buttonTheme = "text-accent-content block py-2 pr-4 pl-3 md:p-0 border-b border-gray-100 hover:bg-gray-50 border-gray-700  hover:bg-gray-700 hover:text-accent-content md:border-0 hover:bg-accent/80 hover:rounded-md md:hover:primart md:hover:bg-transparent md:hover:text-primaryText-light"
   return (
     <>
@@ -12,9 +15,14 @@ const Footer = () => {
         <div className="flex flex-col items-center gap-6 mb-8">
           <div className="flex flex-wrap items-center justify-center gap-5 lg:gap-12 gap-y-3 lg:flex-nowrap">
             <Link href="/contact" className={buttonTheme}>Contact</Link>
-            <Link href="/register" className={buttonTheme}>Register</Link>
-            <Link href="/login" className={buttonTheme}>Login</Link>
-            <Link href="/login" className={buttonTheme}>Dashboard</Link>
+            {isLoaded && !isSignedIn && <>
+              <Link href="/register" className={buttonTheme}>Register</Link>
+              <Link href="/login" className={buttonTheme}>Login</Link>
+            </>
+            }
+            {isLoaded && isSignedIn &&
+              <Link href="/dashboard" className={buttonTheme}>Dashboard</Link>
+            }
             <Link href="/terms" className={buttonTheme}>Terms & Conditions</Link>
             <Link href="/privacy" className={buttonTheme}>Privacy Policy</Link>
           </div>

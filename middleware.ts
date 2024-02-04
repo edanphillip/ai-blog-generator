@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 
 export default authMiddleware({
   // debug: true,
-  publicRoutes: ["/", "/login", "/register", "/api/webhooks/clerk", "/api/webhooks/stripe", "/register/verify-email-address"],
+  publicRoutes: ["/", "/login", "/register", "/faq", "/contact", "/pricing", "/terms", "/api/webhooks/clerk", "/api/webhooks/stripe", "/register/verify-email-address"],
   afterAuth(auth, req, evt) {
     // Handle users who aren't authenticated
     if (!auth.userId && !auth.isPublicRoute) {

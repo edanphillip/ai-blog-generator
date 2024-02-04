@@ -27,7 +27,7 @@ export default async function RootLayout({
       }}>
         <DataContextProvider>
           <body className={"badge-neutral "}>
-            <div className={"bg-secondary to-neutral via-accent from-neutral bg-gradient-to-t h-fullw-screen"}>
+            <div className={"bg-secondary to-neutral via-accent from-neutral bg-gradient-to-t h-full w-screen"}>
               <NavBar />
               {children}
               <div className={"bg-secondary to-accent via-neutral   bg-gradient-to-t h-full w-screen"}>
