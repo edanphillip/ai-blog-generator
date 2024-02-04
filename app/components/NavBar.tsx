@@ -29,7 +29,10 @@ const NavBar = () => {
                                 <CustomNavBarLink route="/pricing" text="Pricing" />
                                 {currentRoute !== "/login"
                                     && currentRoute !== "/register"
-                                    && <TryNowLink />
+                                    && <>
+                                        <CustomNavBarLink route="/login" text="Login" />
+                                        <TryNowLink />
+                                    </>
                                 }
                             </>}
                             {isLoaded && isSignedIn && <>
@@ -44,7 +47,7 @@ const NavBar = () => {
                     </div>
                 </div>
                 <button onClick={() => setHamburgerOpen(!hamburgerIsOpen)} type="button"
-                    className="absolute top-0 right-2 inline-flex items-center p-2 md:w-10 h-10 justify-center text-sm   rounded-lg md:hidden   focus:outline-none focus:ring-2 focus:ring-gray-200 " aria-controls="navbar-default" aria-expanded="false">
+                    className="absolute top-2 right-4 inline-flex items-center p-2 md:w-10 h-10 justify-center text-sm   rounded-lg md:hidden   focus:outline-none focus:ring-2 focus:ring-gray-200 " aria-controls="navbar-default" aria-expanded="false">
                     <span className="sr-only">Open main menu</span>
                     <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h15M1 7h15M1 13h15" />

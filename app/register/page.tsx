@@ -1,8 +1,12 @@
+"use client"
 import { cn } from '@/lib/utils'
-import { SignUp } from '@clerk/nextjs'
+import { SignUp, useUser } from '@clerk/nextjs'
 import { Inter as Font } from 'next/font/google'
+import { redirect } from 'next/navigation'
 const font = Font({ weight: "800", subsets: ["latin"], display: "swap" })
-const page = () => {
+const Page = () => {
+  const { isLoaded, isSignedIn } = useUser();
+  if (isLoaded && isSignedIn) redirect("/dashboard")
   return (
     <div>
       <div className={cn('flex flex-col gap-4 text-center  items-center mx-auto justify-center ', font.className)}>
@@ -16,4 +20,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page
