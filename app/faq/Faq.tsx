@@ -47,7 +47,12 @@ const FAQs = () => {
     )
   }
   return (
-    <div className="py-4 flex-col flex gap-4">
+    <div className="py-4 flex-col flex gap-4 
+    xl:mx-[400px]
+    lg:mx-[200px]
+    md:mx-[50px]
+    mx-[20px]
+    ">
       <h2 className="text-center text-4xl font-black ">Frequently Asked Questions</h2>
       <dl className="bg-gray-300 rounded-lg border-2 border-neutral-content">
         {faqs.map((faq, index) =>
