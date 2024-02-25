@@ -5,7 +5,7 @@ import { initalizeStripeCustomerIfNotExists } from '@/app/lib/stripe';
 import { currentUser } from '@clerk/nextjs/server';
 import { log } from 'console';
 import Stripe from 'stripe';
-export async function POST(req: Request, { params }: { params: { priceid: string } }) {
+export async function GET(req: Request, { params }: { params: { priceid: string } }) {
   if (!params.priceid) return error("Invalid Params", 401)
   let priceid = params.priceid;
   const clerkUser = await currentUser();
@@ -13,24 +13,24 @@ export async function POST(req: Request, { params }: { params: { priceid: string
   if (!clerkUser.emailAddresses) return error("No Associated Email Address", 401)
   //if first purchase
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { typescript: true });
-  const vercelUrl = process.env.VERCEL_URL;
+  const hostedURL = process.env.VERCEL_URL;
 
-  console.log(`The application is hosted at: ${vercelUrl}`);
-  const baseURL = "http://" + process.env.BASE_URL //TODO:verify this works on prod server then remove this comment
+  console.log(`The application is hosted at: ${hostedURL}`);
+  const baseURL = "http://" + hostedURL //TODO:verify this works on prod server then remove this comment
   const success_url = baseURL + "?success=true"
   const cancel_url = baseURL + "?canceled=true"
   try {
-    var email = clerkUser.emailAddresses.find(em => em.id == clerkUser.primaryEmailAddressId);
-    if (!email) return error("Invalid email");
-    log(email.verification?.status)
-    if (email.verification?.status !== "verified")
-      if (!email.verification)
+    var primaryEmail = clerkUser.emailAddresses.find(em => em.id == clerkUser.primaryEmailAddressId);
+    if (!primaryEmail) return error("Invalid email");
+    log(primaryEmail.verification?.status)
+    if (primaryEmail.verification?.status !== "verified")
+      if (!primaryEmail.verification)
         return Response.redirect("/emailverification", 303);
     // Create stripe customer if none exists
     //1 add clerk user to db if none exists
     await initializeClerkUserIfNotExists(clerkUser);
     //2 add stripeid
-    const customerID = await initalizeStripeCustomerIfNotExists(email.emailAddress, clerkUser.id);
+    const customerID = await initalizeStripeCustomerIfNotExists(primaryEmail.emailAddress, clerkUser.id);
     if (!customerID) return error("Error getting customerID from stripe", 500)
     const session = await stripe.checkout.sessions.create({
       allow_promotion_codes: true,

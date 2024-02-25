@@ -6,12 +6,12 @@ import getTokenShopPrice, { TokenShopParams } from "./lib/getprices";
 export type DataContextValueProps = {
   tokens: number | null,
   getTokenShopPrice: ({ model, service }: TokenShopParams) => number,
-  updateTokens: () => void;
+  updateTokens: () => Promise<number>;
 }
 
 export const DataContext = createContext<DataContextValueProps>({
   tokens: 0,
-  updateTokens: () => { },
+  updateTokens: async () => Number.NaN,
   getTokenShopPrice: ({ model, service }: TokenShopParams) => 1,
 });
 interface ContextProviderProps {
@@ -20,7 +20,9 @@ interface ContextProviderProps {
 export const DataContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
   const [tokens, setTokens] = useState<number | null>(0);
   const updateTokens = async () => {
-    setTokens(await fetchTokensByCurrentUser())
+    let currTokens = await fetchTokensByCurrentUser()
+    setTokens(currTokens)
+    return currTokens
   }
 
   const data: DataContextValueProps = {

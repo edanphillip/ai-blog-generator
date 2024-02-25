@@ -22,7 +22,7 @@ class ContactForm extends Component {
     e.preventDefault();
     // You can handle the form submission logic here
     // For simplicity, let's just log the form data for now
-    console.log('Form Data:', this.state);
+    // console.log('Form Data:', this.state);
     await fetch('/api/emails', {
       method: 'POST',
       body: JSON.stringify({
@@ -90,7 +90,7 @@ class ContactForm extends Component {
                 </label>
               </div>
               <div className="mt-6 flex items-center justify-center gap-4">
-                <button type="submit" className="transform rounded-lg bg-accent btn p-4 text-accent-content Text-light font-bold transition-colors hover:bg-primary/90">Send Message</button>
+                <button type="submit" className="transform rounded-lg bg-accent/80 duration-300 btn p-4 text-accent-content text-light font-bold transition-colors hover:bg-accent ">Send Message</button>
               </div>
             </form>
           </div>

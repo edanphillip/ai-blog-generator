@@ -12,12 +12,12 @@ const NavBar = () => {
     const [hamburgerIsOpen, setHamburgerOpen] = useState(false);
     return (
         <div>
-            <div className={"fixed lg:relative z-50 w-screen px-12 py-2  badge-neutral   border-gray-200"}>
+            <div className={"  z-50 w-screen px-12 py-2  badge-neutral   border-gray-200"}>
                 <div className="max-w-screen-2xl flex flex-col lg:flex-row items-center justify-between   ">
                     <div onClick={() => setHamburgerOpen(false)} className='relative'>
-                        <Link href="/" className=' absolute z-10 top-[1px] left-[1px]  text-accent-content font-extrabold flex hover:drop-shadow-xl shadow-accent-content shadow-tahiti-400 mx-4 self-center whitespace-nowrap text-2xl '>AI Blog Generator</Link>
+                        <Link href="/" className=' absolute z-10 top-[1px] left-[1px]  text-accent-content font-extrabold flex hover:drop-shadow-xl shadow-accent-content shadow-tahiti-400 mx-4 self-center whitespace-nowrap text-2xl '>Magic AI Articles</Link>
                         <Link href="/" className='select-none absolue z-0 text-accent font-extrabold flex hover:drop-shadow-xl shadow-tahiti-400 mx-4 self-center whitespace-nowrap text-2xl '>
-                            AI Blog Generator
+                            Magic AI Articles
                         </Link>
                     </div>
                     <div hidden={!hamburgerIsOpen} className=" w-full lg:block lg:w-auto" id="navbar-default">
@@ -36,8 +36,8 @@ const NavBar = () => {
                                 }
                             </>}
                             {isLoaded && isSignedIn && <>
+                                {/* <CustomNavBarLink route="/ContactUs" text="Contact Us" /> */}
                                 <CustomNavBarLink route="/dashboard" text="Dashboard" />
-                                <CustomNavBarLink route="/ContactUs" text="Contact Us" />
                                 <PurchaseTokensButton route="/buytokens" className=" " />
                                 <li className={'flex flex-row relative gap-2 mt-4 lg:mt-0 justify-center  align-middle text-center items-center '}>
                                     <UserButton afterSignOutUrl="/" />

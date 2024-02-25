@@ -14,7 +14,7 @@ import coin from "/public/coin.png";
 
 export function Dashboard() {
   const { toast } = useToast()
-  let { updateTokens } = useData()
+  let { updateTokens, tokens } = useData()
   const [blogIdeasLoading, setBlogIdeasLoading] = useState(false);
   const [blogIdeasLoaded, setBlogIdeasLoaded] = useState(false);
   const [blogDoneWriting, setBlogDoneWriting] = useState(true);
@@ -45,6 +45,15 @@ export function Dashboard() {
   }, []);
 
   async function getblogideas() {
+
+    //handle insufficient tokens
+    tokens = await updateTokens();
+    if (tokens < getTokenShopPrice({ model: selectedModel, service: "blogpostideas" })) {
+      toast({ title: "Error Generating", description: "Insufficient Funds", className: " text-red-500 border-red-500" });
+      return;
+    }
+
+    //abort previous requests to generate
     if (controller1?.signal.aborted !== true) {
       controller1?.abort();
     }
@@ -56,6 +65,7 @@ export function Dashboard() {
     setBlogIdeasLoading(true);
     setBlogIdeasLoaded(false);
     setBlogIdeaList([]);
+    //abort previous requests to generate
     var query = blogTopicInput ? blogTopicInput : null;
     if (blogTopicInput == '') {
       setBlogTopicInput(randomTopic)
@@ -106,11 +116,23 @@ export function Dashboard() {
   async function toastError(res: Response) {
     const errorres = await res.json();
     console.error("data.error", errorres);
-    toast({ title: "Error Generating", description: errorres.status });
+    if (errorres?.message)
+      toast({ title: "Error Generating", description: errorres.message, className: " text-red-500 border-red-500" });
+    else {
+      toast({ title: "Error Generating", description: errorres.status });
+    }
 
   }
 
   async function writeblog(idea: string) {
+    //handle insufficient tokens
+    tokens = await updateTokens();
+    if (tokens < getTokenShopPrice({ model: selectedModel2, service: "article" })) {
+      toast({ title: "Error Generating", description: "Insufficient Funds", className: " text-red-500 border-red-500" });
+      return;
+    }
+
+    //abort previous requests
     if (controller2?.signal.aborted !== true) {
       controller2?.abort();
     }
@@ -232,7 +254,7 @@ export function Dashboard() {
   return (
     <main className={`flex  flex-col max-w-screen overflow-x-clip text-neutral    content-center px-10 `}>
       <div className="flex flex-col text-blue gap-y-2 w-[100%] ">
-        <div className="h-[screen] bg-accent text-accent-content flex flex-col lg:flex-row gap-4 justify-around p-4 border-2 border-black w-full  ">
+        <div className="h-[screen] bg-accent text-accent-content flex flex-col lg:flex-row gap-4 justify-around p-4  border-black w-full  ">
           <div className={"flex flex-col  gap-y-2 w-[100%] justify-stretch " + (mainSectionHidden ? "hidden" : "")}>
 
             {/* PART 1 */}
@@ -377,8 +399,8 @@ export function Dashboard() {
             </div>
           </div>
         </div>
-        <button className="btn transform  rounded-md  px-5 py-2 my-2 font-medium  transition-colors   duration-300 w-100%  "
-          onClick={() => setMainSectionHidden(!mainSectionHidden)}>Toggle Left Section</button>
+        {/* <button className="btn transform  rounded-md  px-5 py-2 my-2 font-medium  transition-colors   duration-300 w-100%  "
+          onClick={() => setMainSectionHidden(!mainSectionHidden)}>Toggle Left Section</button> */}
       </div>
     </main >
   );

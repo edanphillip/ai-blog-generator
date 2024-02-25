@@ -1,13 +1,13 @@
 import Markdown from "react-markdown"
 
 const PrivacyPolicy = () => {
-  const terms = `# Privacy Policy for AI Blog Generator 
+   const terms = `# Privacy Policy for Magic AI Articles 
 
   *Last Updated: 02/04/2024*
   
   1. **Introduction**
   
-     Welcome to **AI Blog Generator**! We are committed to protecting the privacy and security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our AI-powered blog article generation SaaS platform.
+     Welcome to **Magic AI Articles**! We are committed to protecting the privacy and security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our AI-powered blog article generation SaaS platform.
   
   2. **Information We Collect**
   
@@ -60,18 +60,18 @@ const PrivacyPolicy = () => {
   
   10. **Contact Us**
   
-  Thank you for trusting **AI Blog Generator** with your information!
+  Thank you for trusting **Magic AI Articles** with your information!
       If you have questions or concerns about this Privacy Policy or our data practices, please contact us at [support@edanphillip.com](mailto:support@edanphillip.com).
   
   `
-  return (
-    <div className="marker:text-black px-16 py-4 bg-white prose   prose-a:text-blue-600 *:text-black  prose-strong:text-black">
+   return (
+      <div className="marker:text-black px-16 py-4 bg-white prose   prose-a:text-blue-600 *:text-black  prose-strong:text-black">
 
-      <Markdown>
-        {terms}
-      </Markdown>
-    </div>
-  )
+         <Markdown>
+            {terms}
+         </Markdown>
+      </div>
+   )
 }
 
 export default PrivacyPolicy

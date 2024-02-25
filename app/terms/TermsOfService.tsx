@@ -1,19 +1,19 @@
 import Markdown from "react-markdown"
 
 const TermsOfService = () => {
-  const terms = `# Terms of Service for AI Blog Generator
+  const terms = `# Terms of Service for Magic AI Articles
 
   *Last Updated: 02/04/2024*
   
-  Welcome to **AI Blog Generator**! We are thrilled to have you as a user of our AI-powered SaaS platform. Before you commence using our services, please carefully read and understand the following terms and conditions:
+  Welcome to **Magic AI Articles**! We are thrilled to have you as a user of our AI-powered SaaS platform. Before you commence using our services, please carefully read and understand the following terms and conditions:
   
   ## 1. Acceptance of Terms
   
-  By accessing or using AI Blog Generator's services, you agree to comply with and be bound by these Terms of Service. If you do not agree with any part of these terms, you may not use our services.
+  By accessing or using Magic AI Articles's services, you agree to comply with and be bound by these Terms of Service. If you do not agree with any part of these terms, you may not use our services.
   
   ## 2. Description of Services
   
-  AI Blog Generator provides a SaaS platform that utilizes artificial intelligence to generate blog articles based on user input and preferences. The generated content is customizable and can be edited by users to meet their specific needs.
+  Magic AI Articles provides a SaaS platform that utilizes artificial intelligence to generate blog articles based on user input and preferences. The generated content is customizable and can be edited by users to meet their specific needs.
   
   ## 3. User Accounts and Security
   
@@ -27,7 +27,7 @@ const TermsOfService = () => {
   
   ## 5. Intellectual Property
   
-  All intellectual property rights related to our services, including but not limited to software, algorithms, and content, are owned or licensed by AI Blog Generator. You may not use, reproduce, or distribute any part of our services without our express written permission.
+  All intellectual property rights related to our services, including but not limited to software, algorithms, and content, are owned or licensed by Magic AI Articles. You may not use, reproduce, or distribute any part of our services without our express written permission.
   
   ## 6. Privacy and Data Security
   
@@ -47,7 +47,7 @@ const TermsOfService = () => {
   
   ## 10. Limitation of Liability
   
-  In no event shall AI Blog Generator be liable for any indirect, incidental, special, or consequential damages arising out of or in any way connected with the use of our services.
+  In no event shall Magic AI Articles be liable for any indirect, incidental, special, or consequential damages arising out of or in any way connected with the use of our services.
   
   ## 11. Governing Law
   
@@ -59,19 +59,19 @@ const TermsOfService = () => {
   
   If you have any questions or concerns about these Terms of Service, please contact us at [support@edanphillip.com](mailto:support@edanphillip.com).
   
-  Thank you for choosing AI Blog Generator!
+  Thank you for choosing Magic AI Articles!
   
   ## 13. Limitation of Liability for Damages
   
-  In no event shall AI Blog Generator be liable for any direct, indirect, incidental, consequential, or special damages, including but not limited to damages for loss of profits, data, or other intangible losses, arising out of or in connection with the use or inability to use our services.
+  In no event shall Magic AI Articles be liable for any direct, indirect, incidental, consequential, or special damages, including but not limited to damages for loss of profits, data, or other intangible losses, arising out of or in connection with the use or inability to use our services.
   
   ## 14. Force Majeure
   
-  AI Blog Generator shall not be liable for any failure or delay in the performance of its obligations hereunder arising out of or caused by circumstances beyond its reasonable control, including, but not limited to, acts of God, acts of terrorism, fire, flood, pandemic, or other unforeseen circumstances.
+  Magic AI Articles shall not be liable for any failure or delay in the performance of its obligations hereunder arising out of or caused by circumstances beyond its reasonable control, including, but not limited to, acts of God, acts of terrorism, fire, flood, pandemic, or other unforeseen circumstances.
   
   ## 15. Indemnification
   
-  The user agrees to indemnify and hold AI Blog Generator harmless from any claim, demand, or damage, including reasonable attorneys' fees, arising out of or in connection with their use of the services, violation of these Terms of Service, or infringement of any intellectual property or other rights of any person or entity.
+  The user agrees to indemnify and hold Magic AI Articles harmless from any claim, demand, or damage, including reasonable attorneys' fees, arising out of or in connection with their use of the services, violation of these Terms of Service, or infringement of any intellectual property or other rights of any person or entity.
    `
   return (
     <div className="px-16 py-4 bg-white prose  *:text-black  prose-strong:text-black">
