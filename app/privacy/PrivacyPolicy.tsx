@@ -61,7 +61,7 @@ const PrivacyPolicy = () => {
   10. **Contact Us**
   
   Thank you for trusting **Magic AI Articles** with your information!
-      If you have questions or concerns about this Privacy Policy or our data practices, please contact us at [support@edanphillip.com](mailto:support@edanphillip.com).
+      If you have questions or concerns about this Privacy Policy or our data practices, please contact us at [support@magicaiarticles.com](mailto:support@magicaiarticles.com).
   
   `
    return (

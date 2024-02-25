@@ -57,7 +57,7 @@ const TermsOfService = () => {
   
   We reserve the right to modify or revise these Terms of Service at any time. You will be notified of significant changes, and your continued use of our services after such changes constitutes your acceptance of the updated terms.
   
-  If you have any questions or concerns about these Terms of Service, please contact us at [support@edanphillip.com](mailto:support@edanphillip.com).
+  If you have any questions or concerns about these Terms of Service, please contact us at [support@magicaiarticles.com](mailto:support@magicaiarticles.com).
   
   Thank you for choosing Magic AI Articles!
   
