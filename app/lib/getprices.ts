@@ -6,11 +6,11 @@ export type TokenShopParams = {
 const getTokenShopPrice = ({ model, service }: TokenShopParams): number => {
   switch (service) {
     case 'article':
-      if (model == 'gpt-3.5-turbo-16k-0613') return 10
+      if (model == 'gpt-3.5-turbo-0125') return 10
       if (model == 'gpt-4-1106-preview') return 200
       break;
     case 'blogpostideas':
-      if (model == 'gpt-3.5-turbo-16k-0613') return 1
+      if (model == 'gpt-3.5-turbo-0125') return 1
       if (model == 'gpt-4-1106-preview') return 15
       break;
   }

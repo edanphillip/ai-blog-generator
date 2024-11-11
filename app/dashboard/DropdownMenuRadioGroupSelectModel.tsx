@@ -23,7 +23,7 @@ export function ModelSelectDropdown(props: { selectedModel: acceptedStreamModels
       <DropdownMenuContent className="w-56">
         <DropdownMenuRadioGroup value={props.selectedModel} onValueChange={(e) => handleValueChange(e as acceptedStreamModels)}>
           <DropdownMenuRadioItem value="gpt-4-1106-preview">GPT-4</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="gpt-3.5-turbo-16k-0613">GPT-3.5</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="gpt-3.5-turbo-0125">GPT-3.5</DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>

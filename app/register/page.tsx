@@ -6,8 +6,7 @@ import { redirect } from 'next/navigation'
 import Footer from '../components/Footer'
 const font = Font({ weight: "800", subsets: ["latin"], display: "swap" })
 const Page = () => {
-  const { isLoaded, isSignedIn } = useUser();
-  if (isLoaded && isSignedIn) redirect("/dashboard")
+  useRedirectIfSignedIn("/dashboard")
   return (
     <div>
       <div className={cn('flex flex-col lg:flex-row text-center  items-center mx-auto justify-center lg: py-4', font.className)}>
@@ -24,3 +23,9 @@ const Page = () => {
 }
 
 export default Page
+
+
+const useRedirectIfSignedIn = (destination: string) => {  
+  const { isLoaded, isSignedIn } = useUser();
+  if (isLoaded && isSignedIn) redirect(destination);
+}

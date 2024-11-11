@@ -37,7 +37,7 @@ export async function GET(request: Request, { params }: { params: { prompt: stri
   }
 }
 
-const streamBlog = (prompt: string, model: "gpt-4-1106-preview" | "gpt-3.5-turbo-16k-0613" = "gpt-3.5-turbo-16k-0613") => {
+const streamBlog = (prompt: string, model: "gpt-4-1106-preview" | "gpt-3.5-turbo-0125" = "gpt-3.5-turbo-0125") => {
   console.log("blog stream initiated");
   //collect variables
   var OPENAI_API_KEY = process.env.OPENAI_API_KEY//? key : process.env.OPENAI_API_KEY;
