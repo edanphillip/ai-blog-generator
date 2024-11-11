@@ -26,8 +26,8 @@ export function Dashboard() {
   const [showPreview, setShowPreview] = useState(true);
   const [controller1, setController1] = useState<AbortController | null>(null);
   const [controller2, setController2] = useState<AbortController | null>(null);
-  const [selectedModel, setSelectedModel] = useState<acceptedStreamModels>("gpt-3.5-turbo-16k-0613");
-  const [selectedModel2, setSelectedModel2] = useState<acceptedStreamModels>("gpt-3.5-turbo-16k-0613");
+  const [selectedModel, setSelectedModel] = useState<acceptedStreamModels>("gpt-3.5-turbo-0125");
+  const [selectedModel2, setSelectedModel2] = useState<acceptedStreamModels>("gpt-3.5-turbo-0125");
   // const textAreaRef = useRef<HTMLTextAreaElement>(null);
   // useAutosizeTextArea(textAreaRef.current, blogPostText);
   const [errorList, seterrorList] = useState<string[]>([]);
