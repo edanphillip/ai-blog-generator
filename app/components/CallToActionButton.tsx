@@ -1,14 +1,22 @@
 'use client'
+import { useUser } from "@clerk/nextjs"
 import Image from "next/image"
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { RingLoader } from "react-spinners"
 import { useData } from "../DataContext"
 import coin from "/public/coin.png"
 const PurchaseTokensButton = ({ route = "/register", className: classname = "", cta = "Get Tokens" }: { route: string, cta?: string, className?: string }) => {
 
   const [hovering, setHovering] = useState(false)
-  const { tokens } = useData();
+  const { tokens, updateTokens } = useData();
+  const { isSignedIn, isLoaded } = useUser();
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      updateTokens();
+    }
+  }, [isSignedIn, isLoaded, updateTokens])
+  
   return (
     <>
       <Link

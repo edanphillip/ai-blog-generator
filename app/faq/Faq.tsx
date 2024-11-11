@@ -18,12 +18,12 @@ const FAQs = () => {
       answer: <Link href={"/buytokens"} className="underline font-bold text-blue-600">Click Here</Link>
     },
     {
-      question: "Do tokens Expire?",
-      answer: "No. Tokens do not expire once they are purchased. However the token shop prices may go up or down based on the price of the AI model or Service you are using."
-    },
-    {
       question: "What can i get with tokens?",
       answer: "You can get your time back. Use tokens on ai services such as blog article generation, Blog ideas generation "
+    },
+    {
+      question: "Do tokens Expire?",
+      answer: "No. Tokens do not expire once they are purchased. However the token shop prices may go up or down based on the price of the AI model or Service you are using."
     },
     {
       question: "How does the app help me generate blog ideas?",
