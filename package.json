@@ -2,6 +2,7 @@
   "name": "ai-blog-generator",
   "version": "0.1.0",
   "private": true,
+  "license":"MIT",
   "scripts": {
     "dev": "next dev",
     "stripe:listen": "stripe listen --forward-to localhost:3000/api/webhooks/stripe",
