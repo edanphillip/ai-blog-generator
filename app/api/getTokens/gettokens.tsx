@@ -145,6 +145,4 @@ async function getuserID(clerkUser: User) {
   const userid = records[0].id
   return userid
 }
-export default fetchTokensByCurrentUser
-
-
+export default fetchTokensByCurrentUser 
