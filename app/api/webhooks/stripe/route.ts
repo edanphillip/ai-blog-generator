@@ -15,7 +15,7 @@ export async function POST(req: Request, res: NextApiResponse) {
 
 
   var buffer = await req.text();
-  var sig = headers().get("stripe-signature")
+  var sig = await headers().then(headers => headers.get("stripe-signature"));
   let event;
   try {
     event = Stripe.webhooks.constructEvent(buffer, sig!, endpointSecret);
@@ -24,7 +24,7 @@ export async function POST(req: Request, res: NextApiResponse) {
   }
   const handleNewStripeCustomer = async (stripecustomer: Stripe.Customer) => {
     await db.update(user)
-      .set({ stripeid: stripecustomer.id })
+      .set({ stripeId: stripecustomer.id })
       .where(eq(user.email, stripecustomer.email!))
   }
   const handlepaymentSuccess = async (payment: Stripe.PaymentIntent) => {
@@ -38,7 +38,7 @@ export async function POST(req: Request, res: NextApiResponse) {
         .values({
           amountPaid: (payment.amount / 1000).toFixed(2),
           transactionId: payment.id,
-          timestamp: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
           userId: parsedUserID,
         })
       //udate customer record
@@ -58,7 +58,7 @@ export async function POST(req: Request, res: NextApiResponse) {
         .values({
           amountPaid: (charge.amount / 1000).toFixed(2),
           transactionId: charge.id,
-          timestamp: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
           userId: parsedUserID,
         })
       //udate customer record

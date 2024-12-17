@@ -3,7 +3,7 @@ import addTokenTransaction from "@/app/lib/addTokenTransaction";
 import checkIfSufficientTokens from "@/app/lib/checkIfSufficientTokens";
 import getTokenShopPrice from "@/app/lib/getprices";
 import { acceptedStreamModels } from "@/app/types";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { OpenAIStream, StreamingTextResponse } from 'ai';
 import OpenAI from "openai";
 export const maxDuration = 300; // This function can run for a maximum of 300 seconds

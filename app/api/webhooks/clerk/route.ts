@@ -43,8 +43,8 @@ export async function POST(req: Request, res: NextApiResponse) {
     }
     case 'user.deleted': {
       await db.update(user)
-        .set({ deleted: 1 })
-        .where(eq(user.clerkid, event.data.id!))
+        .set({ deleted: true })
+        .where(eq(user.clerkId, event.data.id!))
         .execute().then(res => {
           console.log("deleted", res);
         }).catch(err => {
@@ -66,7 +66,7 @@ async function validateWebhook(req: Request) {
     throw new Error('Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local')
   }
   // Get the headers
-  const headerPayload = headers();
+  const headerPayload = await headers();
   const svix_id = headerPayload.get("svix-id");
   const svix_timestamp = headerPayload.get("svix-timestamp");
   const svix_signature = headerPayload.get("svix-signature");

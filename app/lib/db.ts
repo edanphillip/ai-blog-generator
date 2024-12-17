@@ -1,9 +1,6 @@
-import { connect } from "@planetscale/database";
-import { drizzle } from "drizzle-orm/planetscale-serverless";
-
-const connection = connect({
-  host: process.env.SUPABASE_URL ,
-  username: process.env.DATABASE_USERNAME,
-  password: process.env.SUPABASE_KEY
-});
-export const db = drizzle(connection);
+import { config } from 'dotenv';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+config({ path: '.env' }); // or .env.local
+const client = postgres(process.env.DATABASE_URL!);
+export const db = drizzle( client ); 

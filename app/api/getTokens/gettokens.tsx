@@ -61,13 +61,13 @@ async function getTokensSpent(userid: number) {
 async function getNumTokensPurchased(userID: number) {
   //validate user ever even purchased tokens
   console.log("userID:", userID);
-  const userrecords = await db.select({ stripeid: user.stripeid })
+  const userrecords = await db.select({ stripeId: user.stripeId })
     .from(user)
     .where(eq(user.id, userID))
 
   console.log("userrecords:", userrecords);
   if (userrecords.length == 0) throw Error("Invalid ClerkID")
-  const sripeid = userrecords[0].stripeid
+  const sripeid = userrecords[0].stripeId
   console.log("sripeid:", sripeid);
   if (!sripeid) {
     // Stripe ID not set for user  so return
@@ -138,7 +138,7 @@ async function getNumTokensPurchased(userID: number) {
 async function getuserID(clerkUser: User) {
   const records = await db.select({ id: user.id })
     .from(user)
-    .where(eq(user.clerkid, clerkUser.id))
+    .where(eq(user.clerkId, clerkUser.id))
   if (records.length == 0) {
     throw Error("Clerk User Id Not Found in Database.")
   }

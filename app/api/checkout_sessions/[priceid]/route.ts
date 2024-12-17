@@ -29,7 +29,7 @@ export async function GET(req: Request, { params }: { params: { priceid: string 
     // Create stripe customer if none exists
     //1 add clerk user to db if none exists
     await initializeClerkUserIfNotExists(clerkUser);
-    //2 add stripeid
+    //2 add stripeId
     const customerID = await initalizeStripeCustomerIfNotExists(primaryEmail.emailAddress, clerkUser.id);
     if (!customerID) return error("Error getting customerID from stripe", 500)
     const session = await stripe.checkout.sessions.create({
